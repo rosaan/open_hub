@@ -1,19 +1,20 @@
 <?php
+
 /**
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the BSD 3-Clause License
-* that is bundled with this package in the file LICENSE.
-* It is also available through the world-wide-web at this URL:
-* https://opensource.org/licenses/BSD-3-Clause
-*
-*
-* @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
-* @link https://github.com/mymagic/open_hub
-* @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
-* @license https://opensource.org/licenses/BSD-3-Clause
-*/
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the BSD 3-Clause License
+ * that is bundled with this package in the file LICENSE.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/BSD-3-Clause
+ *
+ *
+ * @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
+ * @link https://github.com/mymagic/open_hub
+ * @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
+ * @license https://opensource.org/licenses/BSD-3-Clause
+ */
 
 class SiteController extends Controller
 {
@@ -77,7 +78,7 @@ class SiteController extends Controller
 
 		$query = http_build_query([
 			'client_id' => Yii::app()->params['connectClientId'],
-			'redirect_uri' => $this->createAbsoluteUrl('site/connectCallback', array(), $httpOrHttps),
+			'redirect_uri' => $this->createAbsoluteUrl('connectCallback', array(), $httpOrHttps),
 			'response_type' => 'code',
 			'scope' => '*',
 		]);
@@ -100,7 +101,7 @@ class SiteController extends Controller
 				$_GET['code'],
 				Yii::app()->params['connectClientId'],
 				Yii::app()->params['connectSecretKey'],
-				$this->createAbsoluteUrl('site/connectCallback', array(), $httpOrHttps)
+				$this->createAbsoluteUrl('connectCallback', array(), $httpOrHttps)
 			);
 
 			// check to see if user found using email return by magic connect
