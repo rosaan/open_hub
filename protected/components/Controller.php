@@ -59,14 +59,14 @@ class Controller extends BaseController
 		$this->layoutParams['hideFlashes'] = false;
 		$this->layoutParams['brand'] = Yii::app()->params['brand'];
 
-		if (Yii::app()->params['environment'] == 'staging') {
-			// Notice::flash('This is a staging environment for testing purposes only. Data you inserted here is not persistent!', Notice_WARNING);
-			Notice::flash(Yii::t('notice', 'This is a staging environment for testing purposes only. Data you inserted here is not persistent!'), Notice_WARNING);
-		}
+		// if (Yii::app()->params['environment'] == 'staging') {
+		// 	// Notice::flash('This is a staging environment for testing purposes only. Data you inserted here is not persistent!', Notice_WARNING);
+		// 	Notice::flash(Yii::t('notice', 'This is a staging environment for testing purposes only. Data you inserted here is not persistent!'), Notice_WARNING);
+		// }
 
-		if (Yii::app()->params['environment'] == 'development') {
-			Notice::flash('This is a development environment for developer use only.', Notice_WARNING);
-		}
+		// if (Yii::app()->params['environment'] == 'development') {
+		// 	Notice::flash('This is a development environment for developer use only.', Notice_WARNING);
+		// }
 	}
 
 	protected function initBackendMenu()
@@ -452,8 +452,8 @@ class Controller extends BaseController
 		}
 
 		if (
-			Yii::app()->getModule('interest')
-			&& !Yii::app()->user->isGuest
+			!Yii::app()->user->isGuest
+			&& Yii::app()->getModule('interest')
 			&& Yii::app()->db->schema->getTable('interest', true)
 			&& Yii::app()->db->schema->getTable('interest_user2sdg', true)
 			&& Yii::app()->db->schema->getTable('interest_user2cluster', true)
