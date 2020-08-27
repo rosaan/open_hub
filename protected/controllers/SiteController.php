@@ -125,7 +125,7 @@ class SiteController extends Controller
 			}
 
 			$identity = new UserIdentity($user->username, '');
-			$identity->authenticate('sso');
+			$identity->authenticate();
 			Yii::app()->user->login($identity, 3600 * 24 * 30);
 		}
 
@@ -233,61 +233,26 @@ class SiteController extends Controller
 		$this->render('contact', array('model' => $model));
 	}
 
-	public function actionHello()
-	{
-		echo 'Hello';
-	}
-
-	public function actionAfterLogin()
-	{
-		if (!Yii::app()->user->isGuest) {
-			if (Yii::app()->user->accessCpanel) {
-				$this->redirect(array('/cpanel/index'));
-			} elseif (Yii::app()->user->accessBackend) {
-				$this->redirect(array('/backend/index'));
-			} else {
-				Notice::page(Yii::t('notice', 'Please logout from your account before making a new login'), Notice_INFO, array('url' => $this->createUrl('site/logout'), 'urlLabel' => Yii::t('app', 'Logout Now')));
-			}
-		}
-	}
-
 	/**
 	 * Displays the login page.
 	 */
 	public function actionLogin($returnUrl = '')
 	{
-		$this->redirect(array('/site/connectLogin', 'returnUrl' => $returnUrl));
+		$this->redirect(array('//auth/login', 'returnUrl' => $returnUrl));
 	}
 
 	/**
 	 * Logs out the current user and redirect to homepage.
 	 */
-	public function actionLogout($returnUrl = '')
+	public function actionLogout()
 	{
-		Notice::debugFlash('SiteController.actionLogout()');
-		Yii::app()->user->logout();
-
-		$this->redirect(array('logoutThen', 'returnUrl' => $returnUrl));
-
-		//$this->redirect(Yii::app()->params['baseUrl']);
-	}
-
-	// 2 logout requried to clear the session
-	// todo: detach MaGIC Connect
-	public function actionLogoutThen($returnUrl = '')
-	{
-		Notice::flash(Yii::t('notice', 'You have successfully logout from the system!'), Notice_SUCCESS);
-		if (empty($returnUrl)) {
-			$returnUrl = sprintf('http:%s', urlencode(Yii::app()->params['baseUrl']));
-		}
-
-		$urlConnectLogout = sprintf('%s/logoutRedirectUrl/?url=%s', Yii::app()->params['connectUrl'], $returnUrl);
-		$this->redirect($urlConnectLogout);
+		Yii::app()->user->logout(true);
+		$this->redirect(Yii::app()->params['baseUrl']);
 	}
 
 	public function actionSignup()
 	{
-		throw new CHttpException(404, 'Page not found.');
+		$this->redirect(array('signup'));
 	}
 
 	public function actionLostPassword()

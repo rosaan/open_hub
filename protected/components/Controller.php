@@ -55,21 +55,6 @@ class Controller extends BaseController
 		Yii::app()->session['accessBackend'] = false;
 		Yii::app()->session['accessCpanel'] = false;
 
-		// todo: detach MaGIC Connect
-		if (empty($this->magicConnect)) {
-			$httpOrHttps = Yii::app()->getRequest()->isSecureConnection ? 'https:' : 'http:';
-			$this->magicConnect = new MyMagic\Connect\Client();
-			$this->magicConnect->verifySsl = false;
-			$this->magicConnect->setConnectUrl($httpOrHttps . Yii::app()->params['connectUrl']);
-		}
-
-		if (empty($this->mixPanel) && Yii::app()->params['enableMixPanel']) {
-			$this->mixPanel = Mixpanel::getInstance(Yii::app()->params['mixpanelToken']);
-			if (!empty($this->user) && !empty(($this->user->username))) {
-				$this->mixPanel->identify(Yii::app()->user->username);
-			}
-		}
-
 		$this->layoutParams['bodyClass'] = 'gray-bg';
 		$this->layoutParams['hideFlashes'] = false;
 		$this->layoutParams['brand'] = Yii::app()->params['brand'];
@@ -102,11 +87,9 @@ class Controller extends BaseController
 			array(
 				'label' => Yii::t('app', 'User') . ' <b class="caret"></b>', 'url' => '#',
 				'visible' => Yii::app()->user->getState('accessBackend') == true &&
-					!HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'custom', 'action' => (object)['id' => 'ecosystem'], 'checkAccess' => true]) && (
-					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'member', 'action' => (object)['id' => 'admin']]) ||
-					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'admin', 'action' => (object)['id' => 'admin']]) ||
-					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'backend', 'action' => (object)['id' => 'connect']])
-				),
+					!HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'custom', 'action' => (object)['id' => 'ecosystem'], 'checkAccess' => true]) && (HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'member', 'action' => (object)['id' => 'admin']]) ||
+						HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'admin', 'action' => (object)['id' => 'admin']]) ||
+						HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'backend', 'action' => (object)['id' => 'connect']])),
 				'itemOptions' => array('class' => 'dropdown'), 'submenuOptions' => array('class' => 'dropdown-menu'),
 				'linkOptions' => array('class' => 'dropdown-toggle', 'data-toggle' => 'dropdown'),
 				'items' => array(
@@ -129,13 +112,11 @@ class Controller extends BaseController
 			),
 			array(
 				'label' => Yii::t('backend', 'Commons') . ' <b class="caret"></b>', 'url' => '#',
-				'visible' => Yii::app()->user->getState('accessBackend') == true && (
-					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'organization', 'action' => (object)['id' => 'overview']]) ||
+				'visible' => Yii::app()->user->getState('accessBackend') == true && (HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'organization', 'action' => (object)['id' => 'overview']]) ||
 					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'organization', 'action' => (object)['id' => 'admin']]) ||
 					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'organizationFunding', 'action' => (object)['id' => 'admin']]) ||
 					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'organizationRevenue', 'action' => (object)['id' => 'admin']]) ||
-					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'organizationStatus', 'action' => (object)['id' => 'admin']])
-				),
+					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'organizationStatus', 'action' => (object)['id' => 'admin']])),
 				'active' => $this->activeMenuMain == 'common' ? true : false,
 				'itemOptions' => array('class' => 'dropdown'), 'submenuOptions' => array('class' => 'dropdown-menu'),
 				'linkOptions' => array('class' => 'dropdown-toggle', 'data-toggle' => 'dropdown'),
@@ -182,12 +163,10 @@ class Controller extends BaseController
 					array(
 						'label' => Yii::t('backend', 'Event'), 'url' => '#',
 						// 'visible' => Yii::app()->user->getState('accessBackend') == true,
-						'visible' => Yii::app()->user->getState('accessBackend') == true && (
-							HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'event', 'action' => (object)['id' => 'overview']]) ||
+						'visible' => Yii::app()->user->getState('accessBackend') == true && (HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'event', 'action' => (object)['id' => 'overview']]) ||
 							HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'eventGroup', 'action' => (object)['id' => 'admin']]) ||
 							HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'event', 'action' => (object)['id' => 'admin']]) ||
-							HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'eventRegistration', 'action' => (object)['id' => 'admin']])
-						),
+							HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'eventRegistration', 'action' => (object)['id' => 'admin']])),
 						'active' => $this->activeMenuMain == 'educ8' ? true : false,
 						'itemOptions' => array('class' => 'dropdown-submenu'), 'submenuOptions' => array('class' => 'dropdown-menu'),
 						'linkOptions' => array('class' => 'dropdown-toggle', 'data-toggle' => 'dropdown'),
@@ -229,8 +208,7 @@ class Controller extends BaseController
 			array(
 				'label' => Yii::t('backend', 'Master Data') . ' <b class="caret"></b>', 'url' => '#',
 				// 'visible' => Yii::app()->user->getState('isSuperAdmin') == true,
-				'visible' => (
-					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'productCategory', 'action' => (object)['id' => 'admin']]) ||
+				'visible' => (HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'productCategory', 'action' => (object)['id' => 'admin']]) ||
 					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'cluster', 'action' => (object)['id' => 'admin']]) ||
 					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'persona', 'action' => (object)['id' => 'admin']]) ||
 					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'industry', 'action' => (object)['id' => 'admin']]) ||
@@ -241,8 +219,7 @@ class Controller extends BaseController
 					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'country', 'action' => (object)['id' => 'admin']]) ||
 					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'state', 'action' => (object)['id' => 'admin']]) ||
 					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'city', 'action' => (object)['id' => 'admin']]) ||
-					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'service', 'action' => (object)['id' => 'admin']])
-				),
+					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'service', 'action' => (object)['id' => 'admin']])),
 				'active' => $this->activeMenuMain == 'masterData' ? true : false,
 				'itemOptions' => array('class' => 'dropdown'), 'submenuOptions' => array('class' => 'dropdown-menu'),
 				'linkOptions' => array('class' => 'dropdown-toggle', 'data-toggle' => 'dropdown'),
@@ -315,15 +292,13 @@ class Controller extends BaseController
 			array(
 				'label' => Yii::t('app', 'Site') . ' <b class="caret"></b>', 'url' => '#',
 				// 'visible' => Yii::app()->user->getState('accessBackend') == true && (Yii::app()->user->isSuperAdmin || Yii::app()->user->isContentManager),
-				'visible' => Yii::app()->user->getState('accessBackend') == true && (
-					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'embed', 'action' => (object)['id' => 'admin']]) ||
+				'visible' => Yii::app()->user->getState('accessBackend') == true && (HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'embed', 'action' => (object)['id' => 'admin']]) ||
 					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'lingual', 'action' => (object)['id' => 'admin'], 'module' => (object)['id' => 'i18n']]) ||
 					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'setting', 'action' => (object)['id' => 'admin']]) ||
 					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'registry', 'action' => (object)['id' => 'admin']]) ||
 					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'request', 'action' => (object)['id' => 'admin']]) ||
 					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'seolytic', 'action' => (object)['id' => 'admin']]) ||
-					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'default', 'action' => (object)['id' => 'index'], 'module' => (object)['id' => 'sys']])
-				),
+					HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'default', 'action' => (object)['id' => 'index'], 'module' => (object)['id' => 'sys']])),
 				'itemOptions' => array('class' => 'dropdown'), 'submenuOptions' => array('class' => 'dropdown-menu'),
 				'linkOptions' => array('class' => 'dropdown-toggle', 'data-toggle' => 'dropdown'),
 				'items' => array(
@@ -467,13 +442,6 @@ class Controller extends BaseController
 	public function esLog($msg, $context, $data, $username = '', $custom = array(), $dateLog = '')
 	{
 		return Yii::app()->esLog->log($msg, $context, $data, $username, $custom, $dateLog);
-	}
-
-	public function mixPanelTrack($action, $params)
-	{
-		if (!empty($this->mixPanel)) {
-			$this->mixPanel->track($action, $params);
-		}
 	}
 
 	public function beforeAction($action)

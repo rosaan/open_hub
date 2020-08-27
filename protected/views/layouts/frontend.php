@@ -23,48 +23,48 @@
 
 <?php
 foreach ($this->menuSub as $key => $menu) {
-	$this->menuSub[$key]['url'] = CHtml::normalizeUrl($menu['url']);
+    $this->menuSub[$key]['url'] = CHtml::normalizeUrl($menu['url']);
 }
 ?>
 <!-- nav-main -->
 <div class="container-fluid border-bottom">
-<nav class="navbar navbar-default" id="nav-main" role="navigation">
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
-        <?php echo Html::link(Yii::app()->name, $this->createUrl('/site/index'), array('class' => 'navbar-brand')); ?>
-    </div>
+    <nav class="navbar navbar-default" id="nav-main" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <?php echo Html::link(Yii::app()->name, $this->createUrl('/site/index'), array('class' => 'navbar-brand')); ?>
+        </div>
 
-    <div class="collapse navbar-collapse navbar-ex1-collapse">
-        <!-- Main nav -->
-        <?php $this->initFrontendMenu(); ?>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <!-- Main nav -->
+            <?php $this->initFrontendMenu(); ?>
 
-        <?php 
+            <?php
 
-			if (!Yii::app()->user->isGuest) {
-				$labelMe = sprintf('<img src="%s" class="img-circle" style="width:18px; height:18px" /> %s', ImageHelper::thumb(100, 100, $this->user->profile->image_avatar), YsUtil::truncate($this->user->profile->full_name, 8));
+            if (!Yii::app()->user->isGuest) {
+                $labelMe = sprintf('<img src="%s" class="img-circle" style="width:18px; height:18px" /> %s', ImageHelper::thumb(100, 100, $this->user->profile->image_avatar), YsUtil::truncate($this->user->profile->full_name, 8));
 
-				$this->menuSub['user'] = array(
-					'label' => $labelMe . ' <b class="caret"></b>', 'url' => '#',
-					'itemOptions' => array('class' => 'dropdown'), 'submenuOptions' => array('class' => 'dropdown-menu'),
-					'linkOptions' => array('class' => 'dropdown-toggle', 'data-toggle' => 'dropdown'),
-					'items' => $this->menuUser,
-				);
-			}
-		?>
-        
-        <?php $this->widget('zii.widgets.CMenu', array(
-			'htmlOptions' => array('class' => 'nav navbar-nav navbar-right'),
-			'encodeLabel' => false,
-			'items' => $this->menuSub,
-		)); ?>
+                $this->menuSub['user'] = array(
+                    'label' => $labelMe . ' <b class="caret"></b>', 'url' => '#',
+                    'itemOptions' => array('class' => 'dropdown'), 'submenuOptions' => array('class' => 'dropdown-menu'),
+                    'linkOptions' => array('class' => 'dropdown-toggle', 'data-toggle' => 'dropdown'),
+                    'items' => $this->menuUser,
+                );
+            }
+            ?>
 
-    </div>
-</nav>
+            <?php $this->widget('zii.widgets.CMenu', array(
+                'htmlOptions' => array('class' => 'nav navbar-nav navbar-right'),
+                'encodeLabel' => false,
+                'items' => $this->menuSub,
+            )); ?>
+
+        </div>
+    </nav>
 </div>
 <!-- /nav-main -->
 

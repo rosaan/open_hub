@@ -1,19 +1,20 @@
 <?php
+
 /**
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the BSD 3-Clause License
-* that is bundled with this package in the file LICENSE.
-* It is also available through the world-wide-web at this URL:
-* https://opensource.org/licenses/BSD-3-Clause
-*
-*
-* @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
-* @link https://github.com/mymagic/open_hub
-* @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
-* @license https://opensource.org/licenses/BSD-3-Clause
-*/
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the BSD 3-Clause License
+ * that is bundled with this package in the file LICENSE.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/BSD-3-Clause
+ *
+ *
+ * @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
+ * @link https://github.com/mymagic/open_hub
+ * @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
+ * @license https://opensource.org/licenses/BSD-3-Clause
+ */
 
 class Member extends MemberBase
 {
@@ -33,10 +34,6 @@ class Member extends MemberBase
 	public $signup_ip;
 	public $last_login_ip;
 
-	// magic connect
-	public $first_name;
-	public $last_name;
-
 	public function behaviors()
 	{
 		$return = array(
@@ -50,8 +47,7 @@ class Member extends MemberBase
 				'tagBindingTableTagId' => 'tag_id',
 				'cacheID' => 'cacheTag2Member',
 				'createTagsAutomatically' => true,
-			),*/
-		);
+			),*/);
 
 		foreach (Yii::app()->modules as $moduleKey => $moduleParams) {
 			if (isset($moduleParams['modelBehaviors']) && !empty($moduleParams['modelBehaviors']['Member'])) {
@@ -78,7 +74,7 @@ class Member extends MemberBase
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('user_id', 'required', 'except' => array('create', 'createConnect')),
+			array('user_id', 'required', 'except' => array('create')),
 			array('user_id, date_joined, date_added, date_modified', 'numerical', 'integerOnly' => true),
 			array('text_admin_remark, log_admin_remark', 'safe'),
 			// The following rule is used by search().
@@ -89,24 +85,18 @@ class Member extends MemberBase
 			array('username, full_name', 'required', 'on' => 'create'),
 			array('username', 'unique', 'allowEmpty' => false, 'className' => 'User', 'attributeName' => 'username', 'caseSensitive' => false, 'on' => array('create')),
 			array('username', 'email', 'allowEmpty' => false, 'checkMX' => true, 'on' => array('create')),
-
-			// magic connect
-			// createConnect
-			array('username, first_name, last_name', 'required', 'on' => 'createConnect'),
-			array('username', 'unique', 'allowEmpty' => false, 'className' => 'User', 'attributeName' => 'username', 'caseSensitive' => false, 'on' => array('createConnect')),
-			array('username', 'email', 'allowEmpty' => false, 'checkMX' => true, 'on' => array('createConnect')),
 		);
 	}
 
 	public function attributeLabels()
 	{
 		return array(
-		'user_id' => Yii::t('app', 'User'),
-		'username' => Yii::t('app', 'Email'),
-		'log_admin_remark' => Yii::t('app', 'Admin Remark'),
-		'date_joined' => Yii::t('app', 'Date Joined'),
-		'date_added' => Yii::t('app', 'Date Added'),
-		'date_modified' => Yii::t('app', 'Date Modified'),
+			'user_id' => Yii::t('app', 'User'),
+			'username' => Yii::t('app', 'Email'),
+			'log_admin_remark' => Yii::t('app', 'Admin Remark'),
+			'date_joined' => Yii::t('app', 'Date Joined'),
+			'date_added' => Yii::t('app', 'Date Added'),
+			'date_modified' => Yii::t('app', 'Date Modified'),
 		);
 	}
 

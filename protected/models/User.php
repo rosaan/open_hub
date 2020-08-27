@@ -1,19 +1,20 @@
 <?php
+
 /**
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the BSD 3-Clause License
-* that is bundled with this package in the file LICENSE.
-* It is also available through the world-wide-web at this URL:
-* https://opensource.org/licenses/BSD-3-Clause
-*
-*
-* @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
-* @link https://github.com/mymagic/open_hub
-* @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
-* @license https://opensource.org/licenses/BSD-3-Clause
-*/
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the BSD 3-Clause License
+ * that is bundled with this package in the file LICENSE.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/BSD-3-Clause
+ *
+ *
+ * @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
+ * @link https://github.com/mymagic/open_hub
+ * @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
+ * @license https://opensource.org/licenses/BSD-3-Clause
+ */
 
 class User extends UserBase
 {
@@ -147,12 +148,12 @@ class User extends UserBase
 	public function findByAuthSocial($username, $identifier)
 	{
 		return $this->findByAttributes(array(
-			 'username' => $username,
-			 'social_identifier' => $identifier,
+			'username' => $username,
+			'social_identifier' => $identifier,
 		));
 	}
 
-	public function isUniqueUsername($username)
+	public static function isUniqueUsername($username)
 	{
 		$user = User::model()->find('t.username=:username', array(':username' => $username));
 		if (!empty($user) && !empty($user->username)) {
@@ -455,14 +456,26 @@ class User extends UserBase
 	public function formatEnumSignupType($code)
 	{
 		switch ($code) {
-			case 'default': return Yii::t('app', 'Default'); break;
+			case 'default':
+				return Yii::t('app', 'Default');
+				break;
 
-			case 'facebook': return Yii::t('app', 'Facebook'); break;
+			case 'facebook':
+				return Yii::t('app', 'Facebook');
+				break;
 
-			case 'google': return Yii::t('app', 'Google'); break;
-			case 'admin': return Yii::t('app', 'Admin'); break;
-			case 'connect': return Yii::t('app', 'MaGIC Connect'); break;
-			default: return ''; break;
+			case 'google':
+				return Yii::t('app', 'Google');
+				break;
+			case 'admin':
+				return Yii::t('app', 'Admin');
+				break;
+			case 'connect':
+				return Yii::t('app', 'MaGIC Connect');
+				break;
+			default:
+				return '';
+				break;
 		}
 	}
 

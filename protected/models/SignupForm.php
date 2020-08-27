@@ -1,39 +1,32 @@
 <?php
-/**
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the BSD 3-Clause License
-* that is bundled with this package in the file LICENSE.
-* It is also available through the world-wide-web at this URL:
-* https://opensource.org/licenses/BSD-3-Clause
-*
-*
-* @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
-* @link https://github.com/mymagic/open_hub
-* @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
-* @license https://opensource.org/licenses/BSD-3-Clause
-*/
 
 /**
- * ContactForm class.
- * ContactForm is the data structure for keeping
- * contact form data. It is used by the 'contact' action of 'SiteController'.
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the BSD 3-Clause License
+ * that is bundled with this package in the file LICENSE.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/BSD-3-Clause
+ *
+ *
+ * @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
+ * @link https://github.com/mymagic/open_hub
+ * @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
+ * @license https://opensource.org/licenses/BSD-3-Clause
  */
+
 class SignupForm extends CFormModel
 {
 	public $email;
-	public $cemail;
-
-	//public $tocContent;
-	//public $agreetoc;
-
-	public $verifyCode;
+	public $firstname;
+	public $lastname;
+	public $password;
+	public $passwordc;
 
 	public function init()
 	{
 		parent::init();
-		//$this->tocContent = file_get_contents(Yii::getPathOfAlias('static').'/toc.htm');
 	}
 
 	/**
@@ -42,22 +35,11 @@ class SignupForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			// name, email, subject and body are required
-			////array('email, cemail, agreetoc', 'required'),
-			array('email, cemail, verifyCode', 'required'),
+			array('email, password, passwordc, firstname, lastname', 'required'),
 			// email has to be a valid email address and matched confirmed email
 			array('email', 'emailIsUnique'),
 			array('email', 'email'),
-			array('cemail', 'compare', 'compareAttribute' => 'email'),
-			// nickname from 5-12 characters, must only contains alphabetic value
-			//array('nickname', 'length', 'min'=>5, 'max'=>12),
-			//array('nickname', 'match', 'pattern'=>'/^([a-z0-9_-])+$/', 'message'=>Yii::t('app', '{attribute} only accept valid character set like a-z, 0-9, - and _')),
-			// must check
-			////array('agreetoc', 'required', 'requiredValue'=>1, 'message'=>"You must have read and agree to the terms and conditions to proceed."),
-			//array('gender, address_line2, town', 'safe'),
-
-			// verifyCode needs to be entered correctly
-			array('verifyCode', 'captcha', 'allowEmpty' => !CCaptcha::checkRequirements()),
+			array('passwordc', 'compare', 'compareAttribute' => 'password', 'operator' => '==', 'message' => 'Password does not match!'),
 		);
 	}
 
@@ -70,11 +52,13 @@ class SignupForm extends CFormModel
 	{
 		return array(
 			'email' => Yii::t('app', 'Email'),
-			'cemail' => Yii::t('app', 'Confirm Email'),
+			'firstname' => Yii::t('app', 'Firstname'),
+			'lastname' => Yii::t('app', 'Lastname'),
+			'password' => Yii::t('app', 'Password'),
+			'passwordc' => Yii::t('app', 'Confirm Password'),
 			//'nickname' => Yii::t('app','Nick Name'),
 			//'toc' => Yii::t('app','Terms &amp; Conditions'),
 			//'agreetoc' => Yii::t('app','I have read and agree to terms and conditions'),
-			'verifyCode' => Yii::t('app', 'I am not a robot'),
 		);
 	}
 
@@ -83,5 +67,19 @@ class SignupForm extends CFormModel
 		if (!User::isUniqueUsername($this->$attribute)) {
 			$this->addError($attribute, Yii::t('app', 'This email has already been taken.'));
 		}
+	}
+
+	public function signup()
+	{
+		Notice::debugFlash('SignupForm.signup()');
+
+		try {
+			HUB::createLocalMember($this->email, $this->firstname . ' ' . $this->lastname, $this->password);
+		} catch (\Throwable $th) {
+			Notice::debugFlash(Yii::t('notice', 'signup error code: {error}', ['error' => $th->getMessage()]));
+			return false;
+		}
+
+		return true;
 	}
 }

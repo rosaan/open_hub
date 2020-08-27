@@ -1,20 +1,21 @@
 <?php
+
 /**
-* NOTICE OF LICENSE.
-*
-* This source file is subject to the BSD 3-Clause License
-* that is bundled with this package in the file LICENSE.
-* It is also available through the world-wide-web at this URL:
-* https://opensource.org/licenses/BSD-3-Clause
-*
-*
-* @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
-*
-* @see https://github.com/mymagic/open_hub
-*
-* @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
-* @license https://opensource.org/licenses/BSD-3-Clause
-*/
+ * NOTICE OF LICENSE.
+ *
+ * This source file is subject to the BSD 3-Clause License
+ * that is bundled with this package in the file LICENSE.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/BSD-3-Clause
+ *
+ *
+ * @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
+ *
+ * @see https://github.com/mymagic/open_hub
+ *
+ * @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
+ * @license https://opensource.org/licenses/BSD-3-Clause
+ */
 class HUB extends Component
 {
 	public static function now()
@@ -55,9 +56,9 @@ class HUB extends Component
 		return $model;
 	}
 
-	public function createLocalMember($email, $fullName, $signupType = 'default')
+	public static function createLocalMember($email, $fullName, $password, $signupType = 'default')
 	{
-		$newPassword = ysUtil::generateRandomPassword();
+		$newPassword = $password;
 
 		$model = new Member('create');
 		$model->username = $email;
@@ -75,9 +76,6 @@ class HUB extends Component
 			$user->signup_type = $signupType;
 			$user->signup_ip = Yii::app()->request->userHostAddress;
 			$user->is_active = 1;
-			//Since we are deactivating and not removing account.
-			//$user->hash_email = self::Encrypt($email);
-
 			$result = $user->save();
 
 			// create profile
@@ -101,11 +99,11 @@ class HUB extends Component
 				throw new Exception(Yii::t('app', 'Failed to save user into database '));
 			}
 
-			$log = Yii::app()->esLog->log('created user account', 'user', array('trigger' => 'HUB::createLocalMember', 'model' => 'User', 'action' => 'create', 'id' => $user->id), $user->username);
-
+			Yii::app()->esLog->log('created user account', 'user', array('trigger' => 'HUB::createLocalMember', 'model' => 'User', 'action' => 'create', 'id' => $user->id), $user->username);
 			$transaction->commit();
 		} catch (Exception $e) {
 			$exceptionMessage = $e->getMessage();
+			throw new Exception($exceptionMessage);
 			$result = false;
 			$transaction->rollBack();
 		}
@@ -2174,7 +2172,7 @@ class HUB extends Component
 	 *
 	 * @return boolean
 	 **/
-	public function roleCheckerAction($role, $controller, $action = '')
+	public static function roleCheckerAction($role, $controller, $action = '')
 	{
 		$roles = explode(',', $role);
 

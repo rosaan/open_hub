@@ -33,8 +33,8 @@ class DefaultController extends CController
 		// load existing .envs into array
 		if (file_exists($this->envFilePath)) {
 			$envs = (new josegonzalez\Dotenv\Loader($this->envFilePath))
-			->parse()
-			->toArray();
+				->parse()
+				->toArray();
 		}
 
 		// base on yaml, preload .env to $model->envs as array
@@ -188,8 +188,8 @@ class DefaultController extends CController
 		// load existing .envs into array
 		if (file_exists($this->envFilePath)) {
 			$envs = (new josegonzalez\Dotenv\Loader($this->envFilePath))
-	  ->parse()
-	  ->toArray();
+				->parse()
+				->toArray();
 		}
 
 		$mysqli = new mysqli($envs['DB_HOST'], $envs['DB_USERNAME'], $envs['DB_PASSWORD'], $envs['DB_DATABASE']);
@@ -230,15 +230,15 @@ class DefaultController extends CController
 		// load existing .envs into array
 		if (file_exists($this->envFilePath)) {
 			$envs = (new josegonzalez\Dotenv\Loader($this->envFilePath))
-			->parse()
-			->toArray();
+				->parse()
+				->toArray();
 		}
 
 		// create admin if not found
 		$adminUsername = $envs['ADMIN_EMAIL'];
 		$adminFirstname = 'Admin';
 		$adminLastname = preg_replace('/@.*?$/', '', $adminUsername);
-		$newPassword = rand(100000, 999999);
+		$newPassword = 'password';
 		$salt = sprintf('%s.%s', $adminUsername, $envs['SALT_SECRET']);
 		$encryptedPassword = password_hash(hash_hmac('sha256', $newPassword, $salt), PASSWORD_BCRYPT);
 		$now = time();
@@ -323,7 +323,7 @@ class DefaultController extends CController
 		}
 
 		// if storage mode is local, copy folder with default images from folder uploads in installer to local uploads folder
-		if($envs['STORAGE_MODE']=='local'){
+		if ($envs['STORAGE_MODE'] == 'local') {
 			$this->copyDefaultImages();
 		}
 
@@ -483,20 +483,16 @@ class DefaultController extends CController
 		$src = $this->uploadInstallerPath;
 		$dest = $this->uploadAppPath;
 
-		if(!is_dir($dest))
-		{
+		if (!is_dir($dest)) {
 			mkdir($dest, 0777, true);
 		}
 
-		foreach($folders as $folder)
-		{
-			if(file_exists($src . $folder))
-			{
-				$this->copy_directory( $src . $folder, $dest . $folder );
+		foreach ($folders as $folder) {
+			if (file_exists($src . $folder)) {
+				$this->copy_directory($src . $folder, $dest . $folder);
 
 				// create folder thumbnail
-				if(!is_dir($dest . $folder . '/thumbnail'))
-				{
+				if (!is_dir($dest . $folder . '/thumbnail')) {
 					mkdir($dest . $folder . '/thumbnail', 0777, true);
 				}
 			}
@@ -506,25 +502,26 @@ class DefaultController extends CController
 	/**
 	 * copy directory recursively and items inside it
 	 */
-	public function copy_directory( $source, $destination ) {
-        if ( is_dir( $source ) ) {
-			@mkdir( $destination );
-			$directory = dir( $source );
-			while ( FALSE !== ( $readdirectory = $directory->read() ) ) {
-				if ( $readdirectory == '.' || $readdirectory == '..' ) {
+	public function copy_directory($source, $destination)
+	{
+		if (is_dir($source)) {
+			@mkdir($destination);
+			$directory = dir($source);
+			while (FALSE !== ($readdirectory = $directory->read())) {
+				if ($readdirectory == '.' || $readdirectory == '..') {
 					continue;
 				}
-				$PathDir = $source . '/' . $readdirectory; 
-				if ( is_dir( $PathDir ) ) {
-					copy_directory( $PathDir, $destination . '/' . $readdirectory );
+				$PathDir = $source . '/' . $readdirectory;
+				if (is_dir($PathDir)) {
+					copy_directory($PathDir, $destination . '/' . $readdirectory);
 					continue;
 				}
-				copy( $PathDir, $destination . '/' . $readdirectory );
+				copy($PathDir, $destination . '/' . $readdirectory);
 			}
 
 			$directory->close();
-        } else {
-        	copy( $source, $destination );
-        }
-    }
+		} else {
+			copy($source, $destination);
+		}
+	}
 }

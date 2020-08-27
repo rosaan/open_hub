@@ -1,20 +1,21 @@
 <?php
+
 /**
-* NOTICE OF LICENSE.
-*
-* This source file is subject to the BSD 3-Clause License
-* that is bundled with this package in the file LICENSE.
-* It is also available through the world-wide-web at this URL:
-* https://opensource.org/licenses/BSD-3-Clause
-*
-*
-* @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
-*
-* @see https://github.com/mymagic/open_hub
-*
-* @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
-* @license https://opensource.org/licenses/BSD-3-Clause
-*/
+ * NOTICE OF LICENSE.
+ *
+ * This source file is subject to the BSD 3-Clause License
+ * that is bundled with this package in the file LICENSE.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/BSD-3-Clause
+ *
+ *
+ * @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
+ *
+ * @see https://github.com/mymagic/open_hub
+ *
+ * @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
+ * @license https://opensource.org/licenses/BSD-3-Clause
+ */
 class MemberController extends Controller
 {
 	/**
@@ -42,8 +43,10 @@ class MemberController extends Controller
 	public function accessRules()
 	{
 		return array(
-			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions' => array('view', 'admin', 'create', 'createConnect',
+			array(
+				'allow', // allow admin user to perform 'admin' and 'delete' actions
+				'actions' => array(
+					'view', 'admin', 'create', 'createConnect',
 					'block', 'blockConfirmed', 'unblock', 'unblockConfirmed',
 					'terminate', 'terminateConfirmed', 'permit', 'permitConfirmed',
 					'resetPassword', 'resetPasswordConfirmed',
@@ -52,7 +55,8 @@ class MemberController extends Controller
 				// 'expression' => '$user->isSuperAdmin==true || $user->isMemberManager==true',
 				'expression' => 'HUB::roleCheckerAction(Yii::app()->user->getState("rolesAssigned"), Yii::app()->controller)',
 			),
-			array('deny',  // deny all users
+			array(
+				'deny',  // deny all users
 				'users' => array('*'),
 			),
 		);
@@ -299,7 +303,7 @@ class MemberController extends Controller
 			Yii::t('notice', 'Are you sure to reset password for member user {username}?', ['{username}' => $member->user->username]),
 
 			Notice_WARNING,
-		array('url' => $this->createUrl('resetPasswordConfirmed', array('id' => $id)), 'cancelUrl' => $this->createUrl('view', array('id' => $id)))
+			array('url' => $this->createUrl('resetPasswordConfirmed', array('id' => $id)), 'cancelUrl' => $this->createUrl('view', array('id' => $id)))
 		);
 	}
 
@@ -330,7 +334,7 @@ class MemberController extends Controller
 			Notice::page(
 				Yii::t('notice', 'Are you sure to block this member user {username}? Blocked member user will not beable to login.', ['{username}' => $member->user->username]),
 				Notice_WARNING,
-			array('url' => $this->createUrl('blockConfirmed', array('id' => $id)), 'cancelUrl' => $this->createUrl('view', array('id' => $id)))
+				array('url' => $this->createUrl('blockConfirmed', array('id' => $id)), 'cancelUrl' => $this->createUrl('view', array('id' => $id)))
 			);
 		} else {
 			Notice::flash(Yii::t('notice', 'Member user {username} is already blocked or inactive.', ['{username}' => $member->user->username]), Notice_INFO);
@@ -361,7 +365,7 @@ class MemberController extends Controller
 			Notice::page(
 				Yii::t('notice', 'Are you sure to unblock this member user {username}? Unblocked member user is active and will beable to login again.', ['{username}' => $member->user->username]),
 				Notice_WARNING,
-			array('url' => $this->createUrl('unblockConfirmed', array('id' => $id)), 'cancelUrl' => $this->createUrl('view', array('id' => $id)))
+				array('url' => $this->createUrl('unblockConfirmed', array('id' => $id)), 'cancelUrl' => $this->createUrl('view', array('id' => $id)))
 			);
 		} else {
 			Notice::flash(Yii::t('notice', 'Member user {username} is already unblocked or active.', ['{username}' => $member->user->username]), Notice_INFO);
@@ -392,14 +396,12 @@ class MemberController extends Controller
 			Notice::page(
 				Yii::t('notice', 'Are you sure to terminate this member user {username}? Terminated member user will not be able to login.', ['{username}' => $member->user->username]),
 				Notice_WARNING,
-			array('url' => $this->createUrl('terminateConfirmed', array('id' => $id)), 'cancelUrl' => $this->createUrl('view', array('id' => $id)))
+				array('url' => $this->createUrl('terminateConfirmed', array('id' => $id)), 'cancelUrl' => $this->createUrl('view', array('id' => $id)))
 			);
+		} else {
+			Notice::flash(Yii::t('app', sprintf("Member user '%s' is already blocked or inactive.", $member->user->username)), Notice_INFO);
+			$this->redirect(array('member/view', 'id' => $id));
 		}
-		// else
-		// {
-		// 	Notice::flash(Yii::t('app', sprintf("Member user '%s' is already blocked or inactive.", $member->user->username)), Notice_INFO);
-		// 	$this->redirect(array('member/view', 'id'=>$id));
-		// }
 	}
 
 	public function actionTerminateConfirmed($id)
@@ -409,7 +411,7 @@ class MemberController extends Controller
 		$logBackend = Yii::t('app', "{date} '{username}' - Terminated ", array('{username}' => Yii::app()->user->username, '{date}' => Html::formatDateTime(time(), 'medium', 'long')), null, Yii::app()->sourceLanguage);
 		$member->log_admin_remark = $logBackend . "\n" . $member->log_admin_remark;
 
-		if ($member->user->save(false) && $member->save(false) && $member->user->setStatusToTerminateInConnect()) {
+		if ($member->user->save(false) && $member->save(false)) {
 			//Add the request to Request table
 			//Add the request to Request table
 			$request = Request::model()->findByAttributes(array('status' => 'pending', 'type_code' => 'removeUserAccount', 'user_id' => $id));
@@ -437,14 +439,12 @@ class MemberController extends Controller
 			Notice::page(
 				Yii::t('notice', 'Are you sure to enable this member user {username}? enabled member will be able to login again.', ['{username}' => $member->user->username]),
 				Notice_WARNING,
-			array('url' => $this->createUrl('permitConfirmed', array('id' => $id)), 'cancelUrl' => $this->createUrl('view', array('id' => $id)))
+				array('url' => $this->createUrl('permitConfirmed', array('id' => $id)), 'cancelUrl' => $this->createUrl('view', array('id' => $id)))
 			);
+		} else {
+			Notice::flash(Yii::t('app', sprintf("Member user '%s' is already enabled or active.", $member->user->username)), Notice_INFO);
+			$this->redirect(array('member/view', 'id' => $id));
 		}
-		// else
-		// {
-		// 	Notice::flash(Yii::t('app', sprintf("Member user '%s' is already enabled or active.", $member->user->username)), Notice_INFO);
-		// 	$this->redirect(array('member/view', 'id'=>$id));
-		// }
 	}
 
 	public function actionPermitConfirmed($id)
@@ -454,7 +454,7 @@ class MemberController extends Controller
 		$logBackend = Yii::t('app', "{date} '{username}' - Enabled ", array('{username}' => Yii::app()->user->username, '{date}' => Html::formatDateTime(time(), 'medium', 'long')), null, Yii::app()->sourceLanguage);
 		$member->log_admin_remark = $logBackend . "\n" . $member->log_admin_remark;
 
-		if ($member->user->save(false) && $member->save(false) && $member->user->setStatusToEnableInConnect()) {
+		if ($member->user->save(false) && $member->save(false)) {
 			Notice::flash(Yii::t('notice', 'Member user {username} is successfully enabled.', ['{username}' => $member->user->username]), Notice_SUCCESS);
 		} else {
 			Notice::flash(Yii::t('notice', 'Failed to enable member user {username} due to unknown reason.', ['{username}' => $member->user->username]), Notice_ERROR);

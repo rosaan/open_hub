@@ -26,15 +26,15 @@ $this->menu = array(
 	<?php echo Html::btnDefault(Html::faIcon('fa-arrow-circle-left') . '&nbsp;' . Yii::t('app', 'Back'), $this->createUrl('member/admin')); ?>
 </div>
 
-<?php if (!empty($model->log_admin_alert)): ?>
-<div class="panel panel-warning ">
-	<div class="panel-heading">
-		<?php echo Yii::t('app', 'Alert for admin about this member') ?>
+<?php if (!empty($model->log_admin_alert)) : ?>
+	<div class="panel panel-warning ">
+		<div class="panel-heading">
+			<?php echo Yii::t('app', 'Alert for admin about this member') ?>
+		</div>
+		<div class="panel-body nopadding">
+			<?php echo Html::htmlArea('log_admin_alert', nl2br($model->log_admin_alert), array('style' => 'height:4em; max-width:100%; border:0; overflow-y:scroll')) ?>
+		</div>
 	</div>
-	<div class="panel-body nopadding">
-		<?php echo Html::htmlArea('log_admin_alert', nl2br($model->log_admin_alert), array('style' => 'height:4em; max-width:100%; border:0; overflow-y:scroll')) ?>
-	</div>
-</div>
 <?php endif; ?>
 
 <div class="row">
@@ -42,21 +42,21 @@ $this->menu = array(
 		<!-- user -->
 		<div class="panel panel-default">
 			<!-- Default panel contents -->
-			<div class="panel-heading"><?php echo Yii::t('app', 'User') ?> <?php if (UserSession::isOnlineNow($model->user->id) > 0): ?><span class="label label-success pull-right">Is Online</span><?php endif; ?></div>
+			<div class="panel-heading"><?php echo Yii::t('app', 'User') ?> <?php if (UserSession::isOnlineNow($model->user->id) > 0) : ?><span class="label label-success pull-right">Is Online</span><?php endif; ?></div>
 			<?php
-				if ($model->user->is_active) {
-					$htmlBlockUser = sprintf('&nbsp;<a class="btn btn-xs btn-danger pull-right" href="%s"><i class="fa fa-fw fa-minus-square"></i>&nbsp;%s</a>', $this->createUrl('member/block', array('id' => $model->user->id)), Yii::t('app', 'Block'));
-				} else {
-					$htmlBlockUser = sprintf('&nbsp;<a class="btn btn-xs btn-success pull-right" href="%s"><i class="fa fa-fw fa-check-square"></i>&nbsp;%s</a>', $this->createUrl('member/unblock', array('id' => $model->user->id)), Yii::t('app', 'Unblock'));
-				}
+			if ($model->user->is_active) {
+				$htmlBlockUser = sprintf('&nbsp;<a class="btn btn-xs btn-danger pull-right" href="%s"><i class="fa fa-fw fa-minus-square"></i>&nbsp;%s</a>', $this->createUrl('member/block', array('id' => $model->user->id)), Yii::t('app', 'Block'));
+			} else {
+				$htmlBlockUser = sprintf('&nbsp;<a class="btn btn-xs btn-success pull-right" href="%s"><i class="fa fa-fw fa-check-square"></i>&nbsp;%s</a>', $this->createUrl('member/unblock', array('id' => $model->user->id)), Yii::t('app', 'Unblock'));
+			}
 
-				$isTerminated = $model->user->isUserTerminatedInConnect();
-				if ($isTerminated) {
-					$htmlTerminateUser = sprintf('&nbsp;<a class="btn btn-xs btn-success pull-right" href="%s"><i class="fa fa-fw fa-check-square"></i>&nbsp;%s</a>', $this->createUrl('member/permit', array('id' => $model->user->id)), Yii::t('app', 'Enable'));
-				} else {
-					$htmlTerminateUser = sprintf('&nbsp;<a class="btn btn-xs btn-danger pull-right" href="%s"><i class="fa fa-fw fa-minus-square"></i>&nbsp;%s</a>', $this->createUrl('member/terminate', array('id' => $model->user->id)), Yii::t('app', 'Terminate'));
-				}
-				?>
+			$isTerminated = !$model->user->is_active;
+			if ($isTerminated) {
+				$htmlTerminateUser = sprintf('&nbsp;<a class="btn btn-xs btn-success pull-right" href="%s"><i class="fa fa-fw fa-check-square"></i>&nbsp;%s</a>', $this->createUrl('member/permit', array('id' => $model->user->id)), Yii::t('app', 'Enable'));
+			} else {
+				$htmlTerminateUser = sprintf('&nbsp;<a class="btn btn-xs btn-danger pull-right" href="%s"><i class="fa fa-fw fa-minus-square"></i>&nbsp;%s</a>', $this->createUrl('member/terminate', array('id' => $model->user->id)), Yii::t('app', 'Terminate'));
+			}
+			?>
 			<?php $this->widget('application.components.widgets.DetailView', array(
 				'data' => $model,
 				'attributes' => array(

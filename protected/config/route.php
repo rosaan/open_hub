@@ -7,9 +7,8 @@ return array(
 
 	//
 	// shortcut
-	'connectLogin' => 'site/connectLogin',
-	'connectCallback' => 'site/connectCallback',
-	'login' => 'site/login',
+	'login' => 'auth/login',
+	'signup' => 'auth/signup',
 	'logout' => 'site/logout',
 	'booking' => 'site/booking',
 

@@ -20,6 +20,7 @@ laradock
 protected/modules/telegram/vendor
 protected/modules/twitter/vendor
 
+.cache
 
 docs/.jekyll-cache
 _release
