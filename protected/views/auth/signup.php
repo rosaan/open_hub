@@ -36,7 +36,7 @@ $this->breadcrumbs = array(
                     <span class="text-left"><?php echo $form->bsError($model, 'password'); ?></span>
                 </div>
                 <div class="form-group <?= $form->bsError($model, 'passwordc') ? 'has-error' : '' ?>">
-                    <?= $form->bsPasswordField($model, 'passwordc', array('placeholder' => Yii::t('app', 'Password'), 'type' => 'password', 'required' => true)); ?>
+                    <?= $form->bsPasswordField($model, 'passwordc', array('placeholder' => Yii::t('app', 'Confirm Password'), 'type' => 'password', 'required' => true)); ?>
                     <span class="text-left"><?php echo $form->bsError($model, 'passwordc'); ?></span>
                 </div>
                 <div class="text-left py-2">

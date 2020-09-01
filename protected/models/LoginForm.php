@@ -102,6 +102,9 @@ class LoginForm extends CFormModel
 		} elseif ($this->_identity->errorCode === UserIdentity::ERROR_ACCOUNT_BLOCKED) {
 			Notice::debugFlash('UserIdentity::ERROR_ACCOUNT_BLOCKED');
 			$this->addError('username', Yii::t('core', 'Your account has been disabled by the system admin.'));
+		} elseif ($this->_identity->errorCode === UserIdentity::ERROR_ACCOUNT_NOT_VERIFIED) {
+			Notice::debugFlash('UserIdentity::ERROR_ACCOUNT_NOT_VERIFIED');
+			Notice::flash('<b>Sorry you haven\'t verify your email.</b> Please click on the link that has been sent to your email account to verify your email.', Notice_INFO);
 		} else {
 			Notice::debugFlash('UserIdentity::ERROR_PASSWORD_INVALID');
 			$this->addError('username', Yii::t('notice', 'Incorrect username'));

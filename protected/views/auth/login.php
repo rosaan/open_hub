@@ -46,7 +46,7 @@ $this->breadcrumbs = array(
                 </a>
             </div>
 
-            <a href="#"><small>Forgot password?</small></a>
+            <a href="<?= $this->createUrl('//auth/forget') ?>"><small>Forgot password?</small></a>
             <p class="text-muted text-center"><small>Do not have an account?</small></p>
             <a class="btn btn-sm btn-white btn-block" href="<?= $this->createUrl('//auth/signup') ?>">Create an account</a>
 

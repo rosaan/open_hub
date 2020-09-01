@@ -16,7 +16,7 @@ $return['modules']['language'] = array(
 $return['modules']['egg'] = array(
 	'class' => 'application.yeebase.modules.egg.EggModule',
 	'ipFilters' => array('127.0.0.1', '::1'),
-	'password' => getenv('MODULE_EGG_PASSWORD', 'secret'),
+	'password' => 'secret',
 );
 $return['modules']['inspinia'] = array(
 	'class' => 'application.yeebase.modules.inspinia.InspiniaModule',
@@ -24,14 +24,14 @@ $return['modules']['inspinia'] = array(
 );
 $return['modules']['gii'] = array(
 	'class' => 'system.gii.GiiModule',
-	'password' => getenv('MODULE_GII_PASSWORD', 'secret'),
-	 // If removed, Gii defaults to localhost only. Edit carefully to test.
+	'password' => 'secret',
+	// If removed, Gii defaults to localhost only. Edit carefully to test.
 	'ipFilters' => array('127.0.0.1', '::1'),
 );
 $return['modules']['yee'] = array(
 	'class' => 'application.modules.yee.GiiModule',
-	'password' => getenv('MODULE_YEE_PASSWORD', 'secret'),
-	 // If removed, Gii defaults to localhost only. Edit carefully to test.
+	'password' => 'secret',
+	// If removed, Gii defaults to localhost only. Edit carefully to test.
 	'ipFilters' => array('127.0.0.1', '::1'),
 );
 

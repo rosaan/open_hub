@@ -44,40 +44,29 @@ class ForgetPasswordForm extends CFormModel
 		);
 	}
 
-	/**
-	 * Logs in the user using the given username and password in the model.
-	 * @return boolean whether login is successful
-	 */
 	public function reset()
 	{
-		Notice::debugFlash('ForgetPasswordForm.login()');
-		if ($this->_identity === null) {
-			$this->_identity = new UserIdentity($this->username, $this->password);
-			$this->_identity->authenticate('default');
+		Notice::debugFlash('ForgetPasswordForm.reset()');
+
+		$model = User::username2obj($this->username);
+
+		if (!$model) {
+			Notice::debugFlash('Invalid username!');
 		}
 
-		Notice::debugFlash(Yii::t('notice', 'login error code: {error}', ['error' => $this->_identity->errorCode]));
+		$randomKey = ysUtil::generateRandomKey(32, 32);
+		$keyExpiration =  time() + (60 * 60 * 4);
 
-		// login decision
-		if ($this->_identity->errorCode === UserIdentity::ERROR_NONE) {
-			Notice::debugFlash('UserIdentity::ERROR_NONE');
-			$duration = $this->rememberMe ? 3600 * 24 * 30 : 0; // 30 days
-			Yii::app()->user->login($this->_identity, $duration);
+		$_model = new ForgotPassword();
+		$_model->user_id = $model->id;
+		$_model->reset_password_key = $randomKey;
+		$_model->date_expired = $keyExpiration;
 
+		if ($_model->save(false)) {
 			return true;
-		} elseif ($this->_identity->errorCode === UserIdentity::ERROR_USERNAME_INVALID) {
-			Notice::debugFlash('UserIdentity::ERROR_USERNAME_INVALID');
-			$this->addError('username', Yii::t('notice', 'Incorrect username'));
-			$this->addError('password', Yii::t('notice', 'Incorrect password.'));
-		} elseif ($this->_identity->errorCode === UserIdentity::ERROR_ACCOUNT_BLOCKED) {
-			Notice::debugFlash('UserIdentity::ERROR_ACCOUNT_BLOCKED');
-			$this->addError('username', Yii::t('core', 'Your account has been disabled by the system admin.'));
-		} else {
-			Notice::debugFlash('UserIdentity::ERROR_PASSWORD_INVALID');
-			$this->addError('username', Yii::t('notice', 'Incorrect username'));
-			$this->addError('password', Yii::t('notice', 'Incorrect password.'));
 		}
+		Notice::debugFlash('Reset password is not saved!');
 
-		return false;
+		return true;
 	}
 }

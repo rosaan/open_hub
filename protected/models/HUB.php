@@ -75,8 +75,8 @@ class HUB extends Component
 			$user->password = $newPassword;
 			$user->signup_type = $signupType;
 			$user->signup_ip = Yii::app()->request->userHostAddress;
-			$user->is_active = 1;
-			$result = $user->save();
+			$user->is_active = 0;
+			$result = $user->save(false);
 
 			// create profile
 			if ($result == true) {

@@ -24,6 +24,7 @@
 class UserIdentity extends CUserIdentity
 {
 	const ERROR_ACCOUNT_BLOCKED = 10;
+	const ERROR_ACCOUNT_NOT_VERIFIED = 11;
 
 	private $_id;
 	public $user;
@@ -64,6 +65,12 @@ class UserIdentity extends CUserIdentity
 			$user->stat_login_count++;
 			$user->save(false);
 			$this->errorCode = self::ERROR_ACCOUNT_BLOCKED;
+		}
+		// user is not active and date activated is already set
+		elseif (!$user->is_active && empty($user->date_activated)) {
+			$user->stat_login_count++;
+			$user->save(false);
+			$this->errorCode = self::ERROR_ACCOUNT_NOT_VERIFIED;
 		}
 		// login success
 		else {

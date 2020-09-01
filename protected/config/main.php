@@ -55,13 +55,13 @@ $return = array(
 	'controllerMap' => array(
 		/*'site'=>array(
 		   'class'=>'application.overrides.controllers.SiteController',
-		),*/
-	),
+		),*/),
 
 	'behaviors' => array(
 		'ApplicationConfigBehavior',
 
-		array('class' => 'application.yeebase.extensions.CorsBehavior',
+		array(
+			'class' => 'application.yeebase.extensions.CorsBehavior',
 			// route cant be fully wildcard, need at least a specific controller
 			'route' => array('api/*', 'api/', 'api/getRandomProfiles'),
 			'allowOrigin' => '*'
@@ -118,7 +118,7 @@ $return = array(
 			'errorAction' => 'site/error',
 		),
 		'image' => array(
-		  'class' => 'application.yeebase.extensions.image.CImageComponent',
+			'class' => 'application.yeebase.extensions.image.CImageComponent',
 			// GD or ImageMagick
 			'driver' => getenv('IMAGE_DRIVER', 'GD'),
 		),
@@ -141,7 +141,7 @@ $return = array(
 					'levels' => 'error',
 					'logFile' => 'error.log',
 				),
-				 array(
+				array(
 					'class' => 'application.yeebase.extensions.ys.ProfileFileLogRoute',
 					'levels' => 'profile',
 					'report' => 'callstack',
@@ -163,6 +163,16 @@ $return = array(
 			'enable' => filter_var(getenv('NEO4J_ENABLE', false), FILTER_VALIDATE_BOOLEAN),
 			'class' => 'application.extensions.neo4j.NeoEntity',
 			'neoConnectionString' => sprintf('%s://%s:%s@%s:%d', getenv('NEO4J_PROTOCOL', 'http'), getenv('NEO4J_USERNAME', 'neo4j'), getenv('NEO4J_PASSWORD', 'neo4j'), getenv('NEO4J_HOST', 'neo4j'), getenv('NEO4J_PORT', '7474'))
+		),
+		'mailer' => array(
+			'class' => 'application.extensions.mailer.Mailer',
+			'auth' => getenv('SMTP_AUTH', 'true'),
+			'host' => getenv('SMTP_HOST', 'host'),
+			'port' => getenv('SMTP_PORT', '587'),
+			'username' => getenv('SMTP_USERNAME', 'noreply'),
+			'password' => getenv('SMTP_PASSWORD', 'password'),
+			'senderEmail' => getenv('SMTP_SENDER_EMAIL', 'noreply'),
+			'senderName' => getenv('SMTP_SENDER_NAME', 'noreply'),
 		),
 		'file' => array(
 			'class' => 'application.yeebase.extensions.file.CFile',

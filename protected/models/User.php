@@ -1,5 +1,7 @@
 <?php
 
+use Mpdf\Tag\P;
+
 /**
  *
  * NOTICE OF LICENSE
@@ -107,13 +109,14 @@ class User extends UserBase
 			'member' => array(self::HAS_ONE, 'Member', 'user_id'),
 			//'members' => array(self::HAS_MANY, 'Member', 'username'),
 			'profile' => array(self::HAS_ONE, 'Profile', 'user_id'),
+			'forgotPassword' => array(self::HAS_ONE, 'ForgotPassword', 'user_id'),
 			'roles' => array(self::MANY_MANY, 'Role', 'role2user(user_id, role_id)'),
 			'sessions' => array(self::HAS_MANY, 'UserSession', 'user_id'),
 		);
 	}
 
 	// username
-	public function username2id($username)
+	public static function username2id($username)
 	{
 		$user = User::model()->find('t.username=:username', array(':username' => $username));
 		if (!empty($user)) {
@@ -121,7 +124,7 @@ class User extends UserBase
 		}
 	}
 
-	public function username2obj($username)
+	public static function username2obj($username)
 	{
 		$user = User::model()->find('t.username=:username', array(':username' => $username));
 		if (!empty($user)) {
@@ -301,6 +304,7 @@ class User extends UserBase
 					$this->date_last_login = strtotime($this->date_last_login);
 				}
 			}
+
 			if (!empty($this->date_activated)) {
 				if (!is_numeric($this->date_activated)) {
 					$this->date_activated = strtotime($this->date_activated);
@@ -311,6 +315,8 @@ class User extends UserBase
 				$this->date_added = $this->date_modified = time();
 				if ($this->is_active) {
 					$this->date_activated = time();
+				} else {
+					$this->date_activated = 0;
 				}
 			} else {
 				$this->date_modified = time();
