@@ -1,5 +1,7 @@
 <?php
 
+use Mpdf\Tag\P;
+
 class AuthController extends Controller
 {
 	public $layout = 'frontend';
@@ -46,12 +48,6 @@ class AuthController extends Controller
 					'<b>A verification link has been sent to your email account.</b> Please click on the link that has just been sent to your email account to verify your email and continue the registration process.',
 					Notice_SUCCESS
 				);
-				Yii::app()->mailer->compose(array(
-					'to' => $model->email,
-					'subject' => 'Hi ' . $model->firstname . ', please verify your ' . Yii::app()->name . ' account',
-					'body' => 'auth/verify',
-					'items' => array('model' => $model),
-				));
 				$this->redirect(array('//auth/login'));
 			}
 		}
@@ -73,13 +69,64 @@ class AuthController extends Controller
 		$this->render('forget', array('model' => $model));
 	}
 
+	public function actionResendVerificationEmail($email = '')
+	{
+		if ($email) {
+			$user = User::model()->find('email = :email', array('email' => $email));
+			$fullName = $user->firstname . ' ' . $user->lastname;
+			if (!empty($user)) {
+				Yii::app()->mailer->compose(array(
+					'to' => $user->username,
+					'subject' => 'Hi ' . $fullName . ', please verify your ' . Yii::app()->name . ' account',
+					'body' => 'auth/verify',
+					'items' => array('model' => array('name' => $fullName, 'key' => $user->reset_password_key)),
+				));
+			}
+		}
+		Notice::flash(
+			'<b>A verification link has been sent to your email account.</b> Please click on the link that has just been sent to your email account to verify your email and continue the registration process.',
+			Notice_SUCCESS
+		);
+		$this->redirect(array('//auth/login'));
+	}
+
+	public function actionVerify($code = '')
+	{
+		if (!$code) {
+			return Notice::page('Invalid request!', Notice_ERROR, array(
+				'urlLabel' => 'Login', 'url' => $this->createAbsoluteUrl('//auth/login'),
+			));
+		}
+
+		$user = User::model()->find('reset_password_key = :key', array('key' => $code));
+
+		if (!$user || $user->date_activated) {
+			return Notice::page('Invalid request!', Notice_ERROR, array(
+				'urlLabel' => 'Login', 'url' => $this->createAbsoluteUrl('//auth/login'),
+			));
+		}
+
+		$user->is_active = 1;
+		$user->date_activated = time();
+
+		if ($user->save()) {
+			return Notice::page('Email successfully verified!', Notice_SUCCESS, array(
+				'urlLabel' => 'Login', 'url' => $this->createAbsoluteUrl('//auth/login'),
+			));
+		}
+
+		return Notice::page('Invalid request!', Notice_ERROR, array(
+			'urlLabel' => 'Login', 'url' => $this->createAbsoluteUrl('//auth/login'),
+		));
+	}
+
 	public function actionRecover($rpk = '')
 	{
 		// rpk === reset password key
 		$model = new PasswordRecoverForm();
 
 		if (!$rpk || !$model->checkResetPasswordKey($rpk)) {
-			return Notice::page('Invalid request!', Notice_SUCCESS, array(
+			return Notice::page('Invalid request!', Notice_ERROR, array(
 				'urlLabel' => 'Login', 'url' => $this->createAbsoluteUrl('//auth/login'),
 			));
 		}

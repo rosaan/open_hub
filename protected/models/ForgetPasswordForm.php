@@ -54,6 +54,7 @@ class ForgetPasswordForm extends CFormModel
 			Notice::debugFlash('Invalid username!');
 		}
 
+		$fullName = $model->profile->full_name;
 		$randomKey = ysUtil::generateRandomKey(32, 32);
 		$keyExpiration =  time() + (60 * 60 * 4);
 
@@ -63,6 +64,12 @@ class ForgetPasswordForm extends CFormModel
 		$_model->date_expired = $keyExpiration;
 
 		if ($_model->save(false)) {
+			Yii::app()->mailer->compose(array(
+				'to' => $model->username,
+				'subject' => 'Hi ' . $fullName . ', request to reset password for ' . Yii::app()->name . ' account',
+				'body' => 'auth/forgot',
+				'items' => array('model' => array('name' => $fullName, 'key' => $randomKey)),
+			));
 			return true;
 		}
 		Notice::debugFlash('Reset password is not saved!');

@@ -84,7 +84,7 @@ $style = [
                                     <td style="{{ $fontFamily }} {{ $style['email-body_cell'] }}">
                                         <!-- Greeting -->
                                         <h1 style="{{ $style['header-1'] }}">
-                                            Hello {{ $model->firstname }},
+                                            Hello {{ $model['name'] }},
                                         </h1>
 
                                         <!-- Intro -->
@@ -103,7 +103,7 @@ $style = [
                                                     $actionColor = 'button--blue';
                                                     ?>
 
-                                                    <a href="{{ Yii::app()->createAbsoluteUrl('auth/verify', array('code' => 'cpdecpdepcp')) }}" style="{{ $fontFamily }} {{ $style['button'] }} {{ $style[$actionColor] }}" class="button" target="_blank">
+                                                    <a href="{{ Yii::app()->createAbsoluteUrl('auth/verify', array('code' => $model['key'])) }}" style="{{ $fontFamily }} {{ $style['button'] }} {{ $style[$actionColor] }}" class="button" target="_blank">
                                                         Verify
                                                     </a>
                                                 </td>

@@ -153,10 +153,6 @@ class MemberController extends Controller
 
 	public function actionCreate()
 	{
-		// magic connect
-
-		$this->redirect('createConnect');
-
 		$model = new Member('create');
 
 		// Uncomment the following line if AJAX validation is needed

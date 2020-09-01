@@ -1,19 +1,20 @@
 <?php
+
 /**
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the BSD 3-Clause License
-* that is bundled with this package in the file LICENSE.
-* It is also available through the world-wide-web at this URL:
-* https://opensource.org/licenses/BSD-3-Clause
-*
-*
-* @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
-* @link https://github.com/mymagic/open_hub
-* @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
-* @license https://opensource.org/licenses/BSD-3-Clause
-*/
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the BSD 3-Clause License
+ * that is bundled with this package in the file LICENSE.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/BSD-3-Clause
+ *
+ *
+ * @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
+ * @link https://github.com/mymagic/open_hub
+ * @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
+ * @license https://opensource.org/licenses/BSD-3-Clause
+ */
 
 class ProfileController extends Controller
 {
@@ -28,11 +29,13 @@ class ProfileController extends Controller
 	public function accessRules()
 	{
 		return array(
-			array('allow',  // allow all users to perform 'index' and 'view' actions
+			array(
+				'allow',  // allow all users to perform 'index' and 'view' actions
 				'actions' => array('index', 'view', 'update', 'changePassword'),
 				'users' => array('@'),
 			),
-			array('deny',  // deny all users
+			array(
+				'deny',  // deny all users
 				'users' => array('*'),
 			),
 		);
@@ -106,11 +109,6 @@ class ProfileController extends Controller
 
 		if (Yii::app()->user->isGuest) {
 			throw new CException(Yii::t('app', 'You must login to update your password.'));
-		}
-		// magic connect
-		// todo: detach MaGIC Connect
-		if (!empty($this->magicConnect)) {
-			$this->redirect($this->magicConnect->getProfileUrl());
 		}
 
 		$model = new User('changePassword');

@@ -58,6 +58,7 @@ class HUB extends Component
 
 	public static function createLocalMember($email, $fullName, $password, $signupType = 'default')
 	{
+		$verificationKey = ysUtil::generateRandomKey(32, 32);
 		$newPassword = $password;
 
 		$model = new Member('create');
@@ -76,8 +77,9 @@ class HUB extends Component
 			$user->signup_type = $signupType;
 			$user->signup_ip = Yii::app()->request->userHostAddress;
 			$user->is_active = 0;
-			$result = $user->save(false);
+			$user->reset_password_key = $verificationKey;
 
+			$result = $user->save(false);
 			// create profile
 			if ($result == true) {
 				$user->profile->user_id = $user->id;
@@ -98,7 +100,12 @@ class HUB extends Component
 			} else {
 				throw new Exception(Yii::t('app', 'Failed to save user into database '));
 			}
-
+			Yii::app()->mailer->compose(array(
+				'to' => $email,
+				'subject' => 'Hi ' . $fullName . ', please verify your ' . Yii::app()->name . ' account',
+				'body' => 'auth/verify',
+				'items' => array('model' => array('name' => $fullName, 'key' => $verificationKey)),
+			));
 			Yii::app()->esLog->log('created user account', 'user', array('trigger' => 'HUB::createLocalMember', 'model' => 'User', 'action' => 'create', 'id' => $user->id), $user->username);
 			$transaction->commit();
 		} catch (Exception $e) {
@@ -2111,11 +2118,6 @@ class HUB extends Component
 
 			if (is_null($user)) {
 				return;
-			}
-
-			//First delete connect user
-			if (!$user->destroyRemoteConnectUser()) {
-				throw new Exception('Failed to delete Connect user!');
 			}
 			if ($user->delete() == false) {
 				throw new Exception('Failed to delete user account!');

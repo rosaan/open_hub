@@ -102,11 +102,6 @@ class Controller extends BaseController
 						'label' => Yii::t('app', 'Admin'), 'url' => Yii::app()->createUrl('admin/admin'),
 						// 'visible' => Yii::app()->user->getState('isSuperAdmin') || Yii::app()->user->getState('isAdminManager')
 						'visible' => HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'admin', 'action' => (object)['id' => 'admin']])
-					),
-					array(
-						'label' => Yii::t('app', 'Connect'), 'url' => Yii::app()->createUrl('backend/connect'),
-						// 'visible' => Yii::app()->user->getState('isSuperAdmin') || Yii::app()->user->getState('isDeveloper')
-						'visible' => HUB::roleCheckerAction(Yii::app()->user->getState('rolesAssigned'), (object)['id' => 'backend', 'action' => (object)['id' => 'connect']])
 					)
 				),
 			),

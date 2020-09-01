@@ -25,11 +25,11 @@ foreach ($modules as $moduleKey => $moduleParams) {
 
 <!-- flashes -->
 <?php if (!$this->layoutParams['hideFlashes'] && Notice::hasFlashes()) : ?>
-<div class="row">
-    <div id="layout-flashNotice">
-        <?php echo Notice::renderFlashes(); ?>
-    </div>
-</div>
+	<div class="row">
+		<div id="layout-flashNotice">
+			<?php echo Notice::renderFlashes(); ?>
+		</div>
+	</div>
 <?php endif; ?>
 <!-- /flashes -->
 
@@ -125,9 +125,6 @@ foreach ($modules as $moduleKey => $moduleParams) {
 </div>
 <!-- /container -->
 
-<!-- // todo: detach MaGIC Connect -->
-<iframe style="border:0; width:1px; height:1px" src="https://<?php echo Yii::app()->params['connectUrl']; ?>/profile"></iframe>
-
 <!-- modal-common -->
 <div id="modal-common" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalLabel-common" data-load-url="">
 </div>
@@ -144,8 +141,8 @@ foreach ($modules as $moduleKey => $moduleParams) {
 
 
 <?php Yii::app()->clientScript->registerScript(
-							'settings-script',
-							<<<EOD
+	'settings-script',
+	<<<EOD
 updateQuickInfo();
 setInterval(function() {updateQuickInfo();}, 10000);
 EOD

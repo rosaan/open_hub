@@ -1,20 +1,21 @@
 <?php
+
 /**
-* NOTICE OF LICENSE.
-*
-* This source file is subject to the BSD 3-Clause License
-* that is bundled with this package in the file LICENSE.
-* It is also available through the world-wide-web at this URL:
-* https://opensource.org/licenses/BSD-3-Clause
-*
-*
-* @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
-*
-* @see https://github.com/mymagic/open_hub
-*
-* @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
-* @license https://opensource.org/licenses/BSD-3-Clause
-*/
+ * NOTICE OF LICENSE.
+ *
+ * This source file is subject to the BSD 3-Clause License
+ * that is bundled with this package in the file LICENSE.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/BSD-3-Clause
+ *
+ *
+ * @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
+ *
+ * @see https://github.com/mymagic/open_hub
+ *
+ * @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
+ * @license https://opensource.org/licenses/BSD-3-Clause
+ */
 class BackendController extends Controller
 {
 	public $layout = 'backend';
@@ -38,22 +39,26 @@ class BackendController extends Controller
 	public function accessRules()
 	{
 		return array(
-			array('allow', // allow admin user to perform 'admin' and 'delete' actions
+			array(
+				'allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions' => array('dashboard', 'renderDashboardViewTab', 'logout', 'me', 'changePassword', 'updateAccount', 'getQuickInfo', 'getSubjectTags'),
 				'users' => array('@'),
 				'expression' => '$user->accessBackend==true',
 			),
-			array('allow', // allow admin user to sync local account to connect
+			array(
+				'allow', // allow admin user to sync local account to connect
 				'actions' => array('connect', 'connectConfirmed'),
 				'users' => array('@'),
 				// 'expression' => '$user->isDeveloper==true || $user->isSuperAdmin==true ',
 				'expression' => 'HUB::roleCheckerAction(Yii::app()->user->getState("rolesAssigned"), Yii::app()->controller)',
 			),
-			array('allow',
+			array(
+				'allow',
 				'actions' => array('index', 'login'),
 				'users' => array('*'),
 			),
-			array('deny',  // deny all users
+			array(
+				'deny',  // deny all users
 				'users' => array('*'),
 			),
 		);
@@ -163,96 +168,10 @@ class BackendController extends Controller
 		$this->render('me', array('model' => $profile));
 	}
 
-	public function actionConnectConfirmed()
-	{
-		//echo 'start';
-		//print_r($this->magicConnect->getUserData());
-		//echo $this->magicConnect->isLoggedIn();
-		//echo (int)$this->magicConnect->isUserExists('exiang83@gmail.com');
-		//echo (int)$this->magicConnect->isUserExists('exiang83+88aaaaa@gmail.com');
-		//$tmp = $this->magicConnect->createUser('exiang83+'.rand(1,99).'@gmail.com', 'Allen', 'Tan');
-
-		// get all user
-		$users = User::model()->findAll();
-
-		// loop thru each
-		$countToConnect = 0;
-		$countConnected = 0;
-		$total = count($users);
-		$newPassword = ysUtil::generateRandomPassword();
-		foreach ($users as $user) {
-			//echo $user->username;
-			// find which have connect account and which not
-			if (!empty($user->username)) {
-				echo $user->username . ' - ' . $user->profile->full_name . '<br>';
-				try {
-					// todo: detach MaGIC Connect
-					$c = $this->magicConnect->isUserExists($user->username);
-					if ($c != true) {
-						++$countToConnect;
-						$result = $this->magicConnect->createUser($user->username, $user->first_name, $user->last_name, $newPassword);
-						if ($result) {
-							++$countConnected;
-						}
-					}
-				} catch (Exception $e) {
-				}
-			}
-		}
-
-		echo $countToConnect . '<br />';
-		echo $countConnected . '<br />';
-	}
-
-	public function actionConnect()
-	{
-		// get all user
-		$users = User::model()->findAll();
-
-		// loop thru each
-		$countConnected = 0;
-		$total = count($users);
-		foreach ($users as $user) {
-			//echo $user->username;
-			// find which have connect account and which not
-			if (!empty($user->username)) {
-				try {
-					// todo: detach MaGIC Connect
-					$c = $this->magicConnect->isUserExists($user->username);
-					if ($c == true) {
-						++$countConnected;
-					}
-				} catch (Exception $e) {
-				}
-			}
-		}
-
-		//echo $countConnected; echo " | "; echo $total - $countConnected;exit;
-		if ($total - $countConnected < 1) {
-			Notice::page(Yii::t('notice', 'You have no user to create MaGIC connect account for.'), Notice_INFO);
-		} else {
-			Notice::page(
-				Yii::t(
-					'notice',
-					'Out of {total} total users, you have total of {connected} users that registered with MaGIC Connect. Do you like to create MaGIC connect account for the other {notConnected} users?',
-					['{total}' => $total, '{connected}' => $countConnected, '{notConnected}' => $total - $countConnected]
-				),
-				Notice_WARNING,
-				array('url' => $this->createUrl('backend/connectConfirmed'), 'cancelUrl' => $this->createUrl('backend/dashboard'))
-			);
-		}
-	}
-
 	public function actionChangePassword()
 	{
 		if (Yii::app()->user->isGuest) {
 			throw new CException(Yii::t('app', 'You must login to update your password.'));
-		}
-
-		// magic connect
-		// todo: detach MaGIC Connect
-		if (!empty($this->magicConnect)) {
-			$this->redirect($this->magicConnect->getProfileUrl());
 		}
 
 		$model = new User('changePassword');
@@ -286,11 +205,6 @@ class BackendController extends Controller
 	{
 		if (Yii::app()->user->isGuest) {
 			throw new CException(Yii::t('app', 'You must login to update your profile'));
-		}
-		// magic connect
-		// todo: detach MaGIC Connect
-		if (!empty($this->magicConnect)) {
-			$this->redirect($this->magicConnect->getProfileUrl());
 		}
 
 		$model = Profile::model()->find('t.user_id=:userId', array(':userId' => Yii::app()->user->id));

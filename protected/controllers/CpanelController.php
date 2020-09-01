@@ -1,20 +1,21 @@
 <?php
+
 /**
-* NOTICE OF LICENSE.
-*
-* This source file is subject to the BSD 3-Clause License
-* that is bundled with this package in the file LICENSE.
-* It is also available through the world-wide-web at this URL:
-* https://opensource.org/licenses/BSD-3-Clause
-*
-*
-* @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
-*
-* @see https://github.com/mymagic/open_hub
-*
-* @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
-* @license https://opensource.org/licenses/BSD-3-Clause
-*/
+ * NOTICE OF LICENSE.
+ *
+ * This source file is subject to the BSD 3-Clause License
+ * that is bundled with this package in the file LICENSE.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/BSD-3-Clause
+ *
+ *
+ * @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
+ *
+ * @see https://github.com/mymagic/open_hub
+ *
+ * @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
+ * @license https://opensource.org/licenses/BSD-3-Clause
+ */
 class CpanelController extends Controller
 {
 	/**
@@ -92,20 +93,11 @@ class CpanelController extends Controller
 
 		$modelIndividual = Individual::getIndividualByEmail(Yii::app()->user->username);
 		if ($modelIndividual === null) {
-			// todo: detach MaGIC Connect
-			$account = $this->magicConnect->getUser($_COOKIE['x-token-access'], $_COOKIE['x-token-refresh'], Yii::app()->params['connectClientId'], Yii::app()->params['connectSecretKey']);
-			$gender = null;
-			if ($account->gender === 'M') {
-				$gender = 'male';
-			} elseif ($account->gender === 'F') {
-				$gender = 'female';
-			}
-			$fullname = $account->firstname . ' ' . $account->lastname;
 			$modelIndividual = new Individual();
-			$modelIndividual->full_name = $fullname;
+			$modelIndividual->full_name = $model->member->full_name;
 			$modelIndividual->image_photo = Individual::getDefaultImagePhoto();
-			$modelIndividual->gender = $gender;
-			$modelIndividual->country_code = ($account->country) ? $account->country : null;
+			$modelIndividual->gender = 'male';
+			$modelIndividual->country_code = null;
 			$modelIndividual->save();
 		}
 		if (!$modelIndividual->hasUserEmail(Yii::app()->user->username)) {
@@ -374,7 +366,7 @@ class CpanelController extends Controller
 
 		$email = $userObj->username;
 
-		if ($userObj->save(false) && $member->save(false) && $userObj->setStatusToTerminateInConnect()) {
+		if ($userObj->save(false) && $member->save(false)) {
 			//Add the request to Request table
 			$request = Request::model()->findByAttributes(array('status' => 'pending', 'type_code' => 'removeUserAccount', 'user_id' => $id));
 			if (empty($r)) {
@@ -410,10 +402,7 @@ class CpanelController extends Controller
 
 			Yii::app()->user->logout();
 
-			// todo: detach MaGIC Connect
-			$url = sprintf('%s/logoutRedirectUrl/?url=%s', Yii::app()->params['connectUrl'], Yii::app()->params['baseUrl'] . '/site/TerminateAccount');
-
-			$this->redirect($url);
+			$this->redirect('//site/TerminateAccount');
 		} else {
 			Notice::flash(Yii::t('notice', 'Failed to terminate user {username} due to unknown reason.', ['{username}' => $userObj->username]), Notice_ERROR);
 
