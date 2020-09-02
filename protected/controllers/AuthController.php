@@ -72,7 +72,7 @@ class AuthController extends Controller
 	public function actionResendVerificationEmail($email = '')
 	{
 		if ($email) {
-			$user = User::model()->find('email = :email', array('email' => $email));
+			$user = User::model()->find('username = :email', array('email' => $email));
 			$fullName = $user->firstname . ' ' . $user->lastname;
 			if (!empty($user)) {
 				Yii::app()->mailer->compose(array(
