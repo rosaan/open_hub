@@ -61,8 +61,7 @@ class Mailer extends CComponent
 		try {
 			$this->mailer->send();
 		} catch (Exception $e) {
-			var_dump($e);
-			exit;
+			Notice::debugFlash('Message: ' . $e->getMessage());
 		}
 	}
 }
