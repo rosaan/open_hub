@@ -73,7 +73,7 @@ class AuthController extends Controller
 	{
 		if ($email) {
 			$user = User::model()->find('username = :email', array('email' => $email));
-			$fullName = $user->firstname . ' ' . $user->lastname;
+			$fullName = $user->member->full_name;
 			if (!empty($user)) {
 				Yii::app()->mailer->compose(array(
 					'to' => $user->username,
