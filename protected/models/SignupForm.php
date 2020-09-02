@@ -39,6 +39,7 @@ class SignupForm extends CFormModel
 			// email has to be a valid email address and matched confirmed email
 			array('email', 'emailIsUnique'),
 			array('email', 'email'),
+			array('password', 'passwordValidation'),
 			array('passwordc', 'compare', 'compareAttribute' => 'password', 'operator' => '==', 'message' => 'Password does not match!'),
 		);
 	}
@@ -66,6 +67,19 @@ class SignupForm extends CFormModel
 	{
 		if (!User::isUniqueUsername($this->$attribute)) {
 			$this->addError($attribute, Yii::t('app', 'This email has already been taken.'));
+		}
+	}
+
+	public function passwordValidation($attribute, $params)
+	{
+		if (strlen($this->$attribute) <= '8') {
+			$this->addError($attribute, Yii::t('app', 'Your Password Must Contain At Least 8 Characters!'));
+		} elseif (!preg_match("#[0-9]+#", $this->$attribute)) {
+			$this->addError($attribute, Yii::t('app', 'Your Password Must Contain At Least 1 Number!'));
+		} elseif (!preg_match("#[A-Z]+#", $this->$attribute)) {
+			$this->addError($attribute, Yii::t('app', 'Your Password Must Contain At Least 1 Capital Letter!'));
+		} elseif (!preg_match("#[a-z]+#", $this->$attribute)) {
+			$this->addError($attribute, Yii::t('app', 'Your Password Must Contain At Least 1 Lowercase Letter!'));
 		}
 	}
 

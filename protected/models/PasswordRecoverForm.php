@@ -30,6 +30,7 @@ class PasswordRecoverForm extends CFormModel
 	{
 		return array(
 			array('password, passwordc', 'required'),
+			array('password', 'passwordValidation'),
 			array('passwordc', 'compare', 'compareAttribute' => 'password', 'operator' => '==', 'message' => 'Password does not match!'),
 		);
 	}
@@ -43,6 +44,19 @@ class PasswordRecoverForm extends CFormModel
 			'password' => Yii::t('app', 'Password'),
 			'passwordc' => Yii::t('app', 'Confirm Password'),
 		);
+	}
+
+	public function passwordValidation($attribute, $params)
+	{
+		if (strlen($this->$attribute) <= '8') {
+			$this->addError($attribute, Yii::t('app', 'Your Password Must Contain At Least 8 Characters!'));
+		} elseif (!preg_match("#[0-9]+#", $this->$attribute)) {
+			$this->addError($attribute, Yii::t('app', 'Your Password Must Contain At Least 1 Number!'));
+		} elseif (!preg_match("#[A-Z]+#", $this->$attribute)) {
+			$this->addError($attribute, Yii::t('app', 'Your Password Must Contain At Least 1 Capital Letter!'));
+		} elseif (!preg_match("#[a-z]+#", $this->$attribute)) {
+			$this->addError($attribute, Yii::t('app', 'Your Password Must Contain At Least 1 Lowercase Letter!'));
+		}
 	}
 
 
