@@ -257,80 +257,24 @@ class AdminController extends Controller
 		$model = new Admin('create');
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if (isset($_POST['Admin'])) {
 			$model->attributes = $_POST['Admin'];
-
+			$user = User::username2obj($_POST['Admin']['username']);
 			if ($model->validate()) {
-				$exceptionMessage = '';
-				$newPassword = ysUtil::generateRandomPassword();
-
 				$transaction = Yii::app()->db->beginTransaction();
 
 				try {
-					// if user already exists
-					if (!User::isUniqueUsername($model->username)) {
-						$user = User::username2obj($model->username);
-						$result = true;
-					} else {
-						$user = new User('create');
-						$user->profile = new Profile('create');
-
-						// create user
-						$user->username = $model->username;
-						$user->password = $newPassword;
-						$user->signup_type = 'admin';
-						$user->signup_ip = Yii::app()->request->userHostAddress;
-						$user->is_active = 1;
-
-						$result = $user->save();
-
-						// create profile
-						if ($result == true) {
-							$user->profile->user_id = $user->id;
-							$user->profile->full_name = $model->full_name;
-							$user->profile->image_avatar = 'uploads/profile/avatar.default.jpg';
-
-							$result = $user->profile->save();
-						} else {
-							throw new Exception(Yii::t('app', 'Failed to save user into database '));
-						}
-					}
-
-					// create admin
-					if ($result == true) {
-						$admin = new Admin();
-						$admin->user_id = $user->id;
-						$admin->username = $user->username;
-						$result = $admin->save();
-					} else {
-						throw new Exception(Yii::t('app', 'Failed to save profile into database'));
-					}
+					$admin = new Admin();
+					$admin->user_id = $user->id;
+					$admin->username = $user->username;
+					$admin->full_name = $user->member->full_name;
+					$admin->save();
 					$transaction->commit();
 				} catch (Exception $e) {
-					$exceptionMessage = $e->getMessage();
-					$result = false;
+					Notice::debugFlash($e->getMessage());
 					$transaction->rollBack();
-				}
-
-				// successfully finish the registration step of the subscription process
-				if ($result == true) {
-					// send new password
-					$params['email'] = $user->username;
-					$params['password'] = $newPassword;
-					$params['link'] = $this->createAbsoluteUrl('backend/login');
-					$receivers[] = array('email' => $user->username, 'name' => $user->profile->full_name);
-					$result = ysUtil::sendTemplateMail($receivers, Yii::t('default', 'Welcome to {site}', array('{site}' => Yii::app()->params['baseDomain'])), $params, '_createAdmin');
-
-					// continue to the login
-					Notice::page(
-						Yii::t('notice', "Successfully created admin account with username '{username}'. Login password has been sent to the desinated email address '{email}'. Please remember to add role to the admin user.", array('{username}' => $model->username, '{email}' => $model->username)),
-						Notice_SUCCESS,
-						array('urlLabel' => Yii::t('app', 'View Admin'), 'url' => $this->createUrl('view', array('id' => $user->id)))
-					);
-				} else {
-					Notice::page(Yii::t('notice', "Failed to register due to unexpected reason: '{exceptionMsg}'.", ['{exceptionMsg}' => $exceptionMessage]), Notice_ERROR);
 				}
 			}
 		}

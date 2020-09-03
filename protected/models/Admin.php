@@ -1,19 +1,20 @@
 <?php
+
 /**
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the BSD 3-Clause License
-* that is bundled with this package in the file LICENSE.
-* It is also available through the world-wide-web at this URL:
-* https://opensource.org/licenses/BSD-3-Clause
-*
-*
-* @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
-* @link https://github.com/mymagic/open_hub
-* @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
-* @license https://opensource.org/licenses/BSD-3-Clause
-*/
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the BSD 3-Clause License
+ * that is bundled with this package in the file LICENSE.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/BSD-3-Clause
+ *
+ *
+ * @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
+ * @link https://github.com/mymagic/open_hub
+ * @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
+ * @license https://opensource.org/licenses/BSD-3-Clause
+ */
 
 class Admin extends AdminBase
 {
@@ -36,10 +37,10 @@ class Admin extends AdminBase
 	public function attributeLabels()
 	{
 		return array(
-		'user_id' => Yii::t('app', 'User'),
-		'username' => Yii::t('app', 'Email'),
-		'date_added' => Yii::t('app', 'Date Added'),
-		'date_modified' => Yii::t('app', 'Date Modified'),
+			'user_id' => Yii::t('app', 'User'),
+			'username' => Yii::t('app', 'Email'),
+			'date_added' => Yii::t('app', 'Date Added'),
+			'date_modified' => Yii::t('app', 'Date Modified'),
 		);
 	}
 
@@ -53,9 +54,9 @@ class Admin extends AdminBase
 			array('user_id, username, full_name, is_active, date_added, date_modified, sdate_added, edate_added, sdate_modified, edate_modified', 'safe', 'on' => 'search'),
 
 			// create
-			array('username, full_name', 'required', 'on' => 'create'),
-			array('username', 'unique', 'allowEmpty' => false, 'className' => 'User', 'attributeName' => 'username', 'caseSensitive' => false, 'on' => array('create')),
+			array('username', 'required', 'on' => 'create'),
 			array('username', 'email', 'allowEmpty' => false, 'checkMX' => true, 'on' => array('create')),
+			array('username', 'emailIsExist', 'on' => array('create')),
 
 			// magic connect
 			// createConnect
@@ -63,6 +64,13 @@ class Admin extends AdminBase
 			array('username', 'unique', 'allowEmpty' => false, 'className' => 'User', 'attributeName' => 'username', 'caseSensitive' => false, 'on' => array('createConnect')),
 			array('username', 'email', 'allowEmpty' => false, 'checkMX' => true, 'on' => array('createConnect')),
 		);
+	}
+
+	public function emailIsExist($attribute, $params)
+	{
+		if (User::isUniqueUsername($this->$attribute)) {
+			$this->addError($attribute, Yii::t('app', 'Member does not exist!'));
+		}
 	}
 
 	public function search()
