@@ -68,7 +68,7 @@ class Admin extends AdminBase
 
 	public function emailIsExist($attribute, $params)
 	{
-		if (!User::isUniqueUsername($this->$attribute)) {
+		if (User::isUniqueUsername($this->$attribute)) {
 			$this->addError($attribute, Yii::t('app', 'Member does not exist!'));
 		}
 	}
