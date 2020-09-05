@@ -46,13 +46,13 @@ $this->breadcrumbs = array(
 
                 <div class="social-auth-links text-center mb-3">
                     <p>- OR -</p>
-                    <a href="#" class="btn btn-block" style="background: #3b5998; color: white">
+                    <a href="<?= Yii::app()->createAbsoluteUrl('//auth/socialAuth', array('type' => 'facebook')) ?>" class="btn btn-block" style="background: #3b5998; color: white">
                         <i class="fa fa-facebook mr-2"></i> Signup using Facebook
                     </a>
-                    <a href="#" class="btn btn-block" style="background: #db3236; color: white">
+                    <a href="<?= Yii::app()->createAbsoluteUrl('//auth/socialAuth', array('type' => 'google')) ?>" class="btn btn-block" style="background: #db3236; color: white">
                         <i class="fa fa-google mr-2"></i> Signup using Google
                     </a>
-                    <a href="#" class="btn btn-block" style="background: #0e76a8; color: white">
+                    <a href="<?= Yii::app()->createAbsoluteUrl('//auth/socialAuth', array('type' => 'linkedin')) ?>" class="btn btn-block" style="background: #0e76a8; color: white">
                         <i class="fa fa-linkedin mr-2"></i> Signup using LinkedIn
                     </a>
                 </div>

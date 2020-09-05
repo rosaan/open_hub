@@ -119,6 +119,17 @@ class HUB extends Component
 		return $result;
 	}
 
+	public static function createSocialAuth($user, $provider, $identifier)
+	{
+		$model = new SocialAuth();
+		$model->user_id = $user;
+		$model->provider_type = $provider;
+		$model->provider_token = $identifier;
+		if ($model->save())
+			return true;
+		throw new Exception('Failed to create social auth');
+	}
+
 	public static function getOrCreateUser($username, $extra = array())
 	{
 		$user = User::model()->username2obj($username);

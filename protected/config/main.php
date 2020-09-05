@@ -174,6 +174,29 @@ $return = array(
 			'senderEmail' => getenv('SMTP_SENDER_EMAIL', 'noreply'),
 			'senderName' => getenv('SMTP_SENDER_NAME', 'noreply'),
 		),
+		'socialAuth' => array(
+			'class' => 'application.extensions.socialAuth.SocialAuthentication',
+			'config' => array(
+				'providers' => [
+					'Linkedin' => [
+						'enabled' => true,
+						'callback' => 'http://openhub.local/auth/socialAuth?type=linkedin',
+						'keys' => [
+							'id' => '86zq1w6m0k9xfm',
+							'secret' => 'jI5e7gVeuzO5T4QV'
+						]
+					],
+					'Facebook' => [
+						'enabled' => true,
+						'callback' => 'https://openhub.local/auth/socialAuth?type=facebook',
+						'keys' => [
+							'id' => '600880877264247',
+							'secret' => 'bbc04cb2094a3c8dc28fc4b05b75ec3d'
+						]
+					]
+				]
+			)
+		),
 		'file' => array(
 			'class' => 'application.yeebase.extensions.file.CFile',
 		),

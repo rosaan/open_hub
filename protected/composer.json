@@ -42,7 +42,8 @@
     "michelf/php-markdown": "^1.9",
     "intervention/httpauth": "^3.0",
     "wikimedia/composer-merge-plugin": "^1.4",
-    "jenssegers/blade": "^1.3"
+    "jenssegers/blade": "^1.3",
+    "hybridauth/hybridauth": "^3.4"
   },
   "require-dev": {
     "nette/php-generator": "^3.3",
