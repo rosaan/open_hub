@@ -1,19 +1,20 @@
 <?php
+
 /**
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the BSD 3-Clause License
-* that is bundled with this package in the file LICENSE.
-* It is also available through the world-wide-web at this URL:
-* https://opensource.org/licenses/BSD-3-Clause
-*
-*
-* @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
-* @link https://github.com/mymagic/open_hub
-* @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
-* @license https://opensource.org/licenses/BSD-3-Clause
-*/
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the BSD 3-Clause License
+ * that is bundled with this package in the file LICENSE.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/BSD-3-Clause
+ *
+ *
+ * @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
+ * @link https://github.com/mymagic/open_hub
+ * @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
+ * @license https://opensource.org/licenses/BSD-3-Clause
+ */
 
 class Csv
 {
@@ -186,7 +187,6 @@ class Csv
 	{
 		if (!file_exists($path_to_csv)) {
 			echo 'CSV File Does Not Exist';
-
 			return;
 		}
 
@@ -265,6 +265,127 @@ class Csv
 					if (Yii::app()->db->createCommand($sql)->execute()) {
 						echo 'Record inserted/updated';
 					}
+				}
+				$i = 1;
+			}
+			fclose($handle);
+		}
+	}
+
+	public static function importMagicEventCSV($filename): void
+	{
+		if (!file_exists(dirname(__DIR__, 2) . '/data/tmp/' . $filename . '.csv')) {
+			echo 'CSV File Does Not Exist';
+			return;
+		}
+
+		$row = 1;
+
+		if (($handle = fopen(dirname(__DIR__, 2) . '/data/tmp/' . $filename . '.csv', 'r')) !== false) {
+			$i = 0;
+			while (($data = fgetcsv($handle)) !== false) {
+				$groupCode = YsUtil::generateUUID();
+				$eventCode = YsUtil::generateUUID();
+				if ($i > 0) {
+
+					$event_name = $data[0] === 'null' ? null : $data[0];
+					$event_group = $data[1] === 'null' ? null : $data[1];
+					$event_desc = $data[2] === 'null' ? null : $data[2];
+					$event_url = $data[3] === 'null' ? null : $data[3];
+					$event_start = $data[4] === 'null' ? null : $data[4];
+					$event_end = $data[5] === 'null' ? null : $data[5];
+					$event_location = $data[6] === 'null' ? null : $data[6];
+					$event_email = $data[7] === 'null' ? null : $data[7];
+
+
+					if ($event_group) {
+						$exist = EventGroup::model()->find('title = :title', array(':title' => $event_group));
+						if (!$exist) {
+							$group = new EventGroup();
+							$group->code = $groupCode;
+							$group->title = $event_group;
+							$group->save();
+						}
+					}
+
+					$group = EventGroup::model()->find('title = :title', array(':title' => $event_group));
+					$event = new Event();
+					$event->code = $eventCode;
+					$event->vendor = 'manual';
+					$event->event_group_code = $event_group ? $group->code : null;
+					$event->title = $event_name;
+					$event->text_short_desc = $event_desc;
+					$event->url_website = $event_url;
+					$event->date_started = $event_start;
+					$event->date_ended = $event_end;
+					$event->full_address = $event_location;
+					$event->email_contact = $event_email;
+					$event->is_survey_enabled = 0;
+					$event->save(false);
+					echo "insert startup " . $event_name . "\n";
+				}
+				$i = 1;
+			}
+			fclose($handle);
+		}
+	}
+
+	public static function importMagicStartupCSV($filename): void
+	{
+
+		if (!file_exists(dirname(__DIR__, 2) . '/data/tmp/' . $filename . '.csv')) {
+			echo 'CSV File Does Not Exist';
+			return;
+		}
+
+		$row = 1;
+
+		if (($handle = fopen(dirname(__DIR__, 2) . '/data/tmp/' . $filename . '.csv', 'r')) !== false) {
+			$i = 0;
+			while (($data = fgetcsv($handle)) !== false) {
+				if ($i > 0) {
+					$orgCode = YsUtil::generateUUID();
+					$startup_name = $data[0] === 'null' ? null : $data[0];
+					$startup_oneliner = $data[1] === 'null' ? null : $data[1];
+					$startup_desc = $data[2] === 'null' ? null : $data[2];
+					$startup_founded = $data[3] === 'null' ? null : $data[3];
+					$startup_country = $data[4] === 'null' ? null : $data[4];
+					$startup_url = $data[5] === 'null' ? null : $data[5];
+					$startup_industry = array(
+						$data[6] === 'null' ? null : $data[6],
+						$data[7] === 'null' ? null : $data[7],
+						$data[8] === 'null' ? null : $data[8],
+						$data[9] === 'null' ? null : $data[9],
+						$data[10] === 'null' ? null : $data[10]
+					);
+
+					$country = null;
+
+					if ($startup_country) {
+						$modelCountry = Country::model()->find('printable_name = :name', array(':name' => $startup_country));
+						if ($modelCountry)
+							$country = $modelCountry->code;
+					}
+
+					$org = new Organization();
+					$org->code = $orgCode;
+					$org->title = $startup_name;
+					$org->text_oneliner = $startup_oneliner;
+					$org->text_short_description = $startup_desc;
+					$org->year_founded = $startup_founded;
+					$org->year_founded = $startup_founded;
+					$org->url_website = $startup_url;
+					$org->address_country_code = $country;
+					if ($org->save()) {
+						foreach ($startup_industry as $industry) {
+							if ($industry) {
+								$modelIndustry = Industry::model()->find('title = :title', array(':title' => $industry));
+								if ($modelIndustry)
+									$org->addIndustry($modelIndustry->id);
+							}
+						}
+					}
+					echo "insert startup " . $startup_name . "\n";
 				}
 				$i = 1;
 			}

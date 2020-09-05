@@ -1,19 +1,20 @@
 <?php
+
 /**
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the BSD 3-Clause License
-* that is bundled with this package in the file LICENSE.
-* It is also available through the world-wide-web at this URL:
-* https://opensource.org/licenses/BSD-3-Clause
-*
-*
-* @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
-* @link https://github.com/mymagic/open_hub
-* @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
-* @license https://opensource.org/licenses/BSD-3-Clause
-*/
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the BSD 3-Clause License
+ * that is bundled with this package in the file LICENSE.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/BSD-3-Clause
+ *
+ *
+ * @author Malaysian Global Innovation & Creativity Centre Bhd <tech@mymagic.my>
+ * @link https://github.com/mymagic/open_hub
+ * @copyright 2017-2020 Malaysian Global Innovation & Creativity Centre Bhd and Contributors
+ * @license https://opensource.org/licenses/BSD-3-Clause
+ */
 
 class CsvCommand extends ConsoleCommand
 {
@@ -27,6 +28,8 @@ class CsvCommand extends ConsoleCommand
 		echo "importOrganizationStatus <PATH_TO_CSV> - Import Organizations Status from CSV\n";
 		echo "importImportOrganizationFunding <PATH_TO_CSV> - Import Organizations Funding from CSV\n";
 		echo "importImportOrganizationRevenue <PATH_TO_CSV> - Import Organizations Revenue from CSV\n";
+		echo "importMagicEvent --filename=<filename> - Import MaGIC events from CSV\n";
+		echo "importMagicStartup --filename=<filename> - Import MaGIC startup from CSV\n";
 		echo "\n";
 	}
 
@@ -53,5 +56,15 @@ class CsvCommand extends ConsoleCommand
 	public function actionImportOrganizationRevenue($csvfile)
 	{
 		$result = Csv::importOrgRevenueCSV($csvfile);
+	}
+
+	public function actionImportMagicEvent($filename)
+	{
+		$result = Csv::importMagicEventCSV($filename);
+	}
+
+	public function actionImportMagicStartup($filename)
+	{
+		$result = Csv::importMagicStartupCSV($filename);
 	}
 }
