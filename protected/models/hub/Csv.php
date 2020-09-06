@@ -18,6 +18,16 @@
 
 class Csv
 {
+
+	public static function generateUUID()
+	{
+		if (function_exists('com_create_guid') === true) {
+			return strtolower(trim(com_create_guid(), '{}'));
+		}
+
+		return strtolower(sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535)));
+	}
+
 	public function importOrgCSV($path_to_csv)
 	{
 		if (!file_exists($path_to_csv)) {
@@ -284,8 +294,8 @@ class Csv
 		if (($handle = fopen(dirname(__DIR__, 2) . '/data/tmp/' . $filename . '.csv', 'r')) !== false) {
 			$i = 0;
 			while (($data = fgetcsv($handle)) !== false) {
-				$groupCode = YsUtil::generateUUID();
-				$eventCode = YsUtil::generateUUID();
+				$groupCode = self::generateUUID();
+				$eventCode = self::generateUUID();
 				if ($i > 0) {
 
 					$event_name = $data[0] === 'null' ? null : $data[0];
@@ -344,7 +354,7 @@ class Csv
 			$i = 0;
 			while (($data = fgetcsv($handle)) !== false) {
 				if ($i > 0) {
-					$orgCode = YsUtil::generateUUID();
+					$orgCode = self::generateUUID();
 					$startup_name = $data[0] === 'null' ? null : $data[0];
 					$startup_oneliner = $data[1] === 'null' ? null : $data[1];
 					$startup_desc = $data[2] === 'null' ? null : $data[2];
