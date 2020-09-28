@@ -57,7 +57,7 @@ $this->breadcrumbs = array(
                                 <i class="fa fa-google mr-2"></i> Sign in using Google
                             </a>
                         <?php } ?>
-                        <?php if (getenv('GOOGLE_ENABLED', false)) { ?>
+                        <?php if (getenv('LINKEDIN_ENABLED', false)) { ?>
                             <a href="<?= Yii::app()->createAbsoluteUrl('//auth/socialAuth', array('type' => 'linkedin')) ?>" class="btn btn-block" style="background: #0e76a8; color: white">
                                 <i class="fa fa-linkedin mr-2"></i> Sign in using LinkedIn
                             </a>
