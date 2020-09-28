@@ -180,7 +180,7 @@ $return = array(
 				'providers' => [
 					'Linkedin' => [
 						'enabled' => getenv('LINKEDIN_ENABLED', false),
-						'callback' => Yii::app()->createAbsoluteUrl('//auth/socialAuth', array('type' => 'linkedin')),
+						'callback' => getenv('BASE_URL', '') . '/auth/socialAuth?type=linkedin',
 						'keys' => [
 							'id' => getenv('LINKEDIN_AUTH_ID', ''),
 							'secret' => getenv('LINKEDIN_AUTH_SECRET', '')
@@ -188,7 +188,7 @@ $return = array(
 					],
 					'Facebook' => [
 						'enabled' => getenv('FACEBOOK_ENABLED', false),
-						'callback' => Yii::app()->createAbsoluteUrl('//auth/socialAuth', array('type' => 'facebook')),
+						'callback' => getenv('BASE_URL', '') . '/auth/socialAuth?type=facebook',
 						'keys' => [
 							'id' => getenv('FACEBOOK_AUTH_ID', ''),
 							'secret' => getenv('FACEBOOK_AUTH_SECRET', '')
@@ -196,7 +196,7 @@ $return = array(
 					],
 					'Google' => [
 						'enabled' => getenv('GOOGLE_ENABLED', false),
-						'callback' => Yii::app()->createAbsoluteUrl('//auth/socialAuth', array('type' => 'google')),
+						'callback' => getenv('BASE_URL', '') . '/auth/socialAuth?type=google',
 						'keys' => [
 							'id' => getenv('GOOGLE_AUTH_ID', ''),
 							'secret' => getenv('GOOGLE_AUTH_SECRET', '')
