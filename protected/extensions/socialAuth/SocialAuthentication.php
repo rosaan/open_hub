@@ -35,5 +35,5 @@ class AuthType extends Enum
 {
     private const FACEBOOK = 'Facebook';
     private const GOOGLE = 'Google';
-    private const LINKEDIN = 'Linkedin';
+    private const LINKEDIN = 'LinkedIn';
 }
