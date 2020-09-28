@@ -179,24 +179,24 @@ $return = array(
 			'config' => array(
 				'providers' => [
 					'Linkedin' => [
-						'enabled' => true,
-						'callback' => 'http://openhub.local/auth/socialAuth?type=linkedin',
+						'enabled' => getenv('LINKEDIN_ENABLED', false),
+						'callback' => Yii::app()->createAbsoluteUrl('//auth/socialAuth', array('type' => 'linkedin')),
 						'keys' => [
 							'id' => getenv('LINKEDIN_AUTH_ID', ''),
 							'secret' => getenv('LINKEDIN_AUTH_SECRET', '')
 						]
 					],
 					'Facebook' => [
-						'enabled' => true,
-						'callback' => 'https://openhub.local/auth/socialAuth?type=facebook',
+						'enabled' => getenv('FACEBOOK_ENABLED', false),
+						'callback' => Yii::app()->createAbsoluteUrl('//auth/socialAuth', array('type' => 'facebook')),
 						'keys' => [
 							'id' => getenv('FACEBOOK_AUTH_ID', ''),
 							'secret' => getenv('FACEBOOK_AUTH_SECRET', '')
 						]
 					],
 					'Google' => [
-						'enabled' => true,
-						'callback' => 'https://openhub.local/auth/socialAuth?type=google',
+						'enabled' => getenv('GOOGLE_ENABLED', false),
+						'callback' => Yii::app()->createAbsoluteUrl('//auth/socialAuth', array('type' => 'google')),
 						'keys' => [
 							'id' => getenv('GOOGLE_AUTH_ID', ''),
 							'secret' => getenv('GOOGLE_AUTH_SECRET', '')

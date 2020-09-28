@@ -32,19 +32,26 @@ $this->breadcrumbs = array(
 
 
             <button type="submit" class="btn btn-primary full-width m-b">Sign In</button>
-
-            <div class="social-auth-links text-center mb-3">
-                <p>- OR -</p>
-                <a href="<?= Yii::app()->createAbsoluteUrl('//auth/socialAuth', array('type' => 'facebook')) ?>" class="btn btn-block" style="background: #3b5998; color: white">
-                    <i class="fa fa-facebook mr-2"></i> Sign in using Facebook
-                </a>
-                <a href="<?= Yii::app()->createAbsoluteUrl('//auth/socialAuth', array('type' => 'google')) ?>" class="btn btn-block" style="background: #db3236; color: white">
-                    <i class="fa fa-google mr-2"></i> Sign in using Google
-                </a>
-                <a href="<?= Yii::app()->createAbsoluteUrl('//auth/socialAuth', array('type' => 'linkedin')) ?>" class="btn btn-block" style="background: #0e76a8; color: white">
-                    <i class="fa fa-linkedin mr-2"></i> Sign in using LinkedIn
-                </a>
-            </div>
+            <?php if (getenv('FACEBOOK_ENABLED', false) || getenv('LINKEDIN_ENABLED', false) || getenv('GOOGLE_ENABLED', false)) { ?>
+                <div class="social-auth-links text-center mb-3">
+                    <p>- OR -</p>
+                    <?php if (getenv('FACEBOOK_ENABLED', false)) { ?>
+                        <a href="<?= Yii::app()->createAbsoluteUrl('//auth/socialAuth', array('type' => 'facebook')) ?>" class="btn btn-block" style="background: #3b5998; color: white">
+                            <i class="fa fa-facebook mr-2"></i> Sign in using Facebook
+                        </a>
+                    <?php } ?>
+                    <?php if (getenv('GOOGLE_ENABLED', false)) { ?>
+                        <a href="<?= Yii::app()->createAbsoluteUrl('//auth/socialAuth', array('type' => 'google')) ?>" class="btn btn-block" style="background: #db3236; color: white">
+                            <i class="fa fa-google mr-2"></i> Sign in using Google
+                        </a>
+                    <?php } ?>
+                    <?php if (getenv('GOOGLE_ENABLED', false)) { ?>
+                        <a href="<?= Yii::app()->createAbsoluteUrl('//auth/socialAuth', array('type' => 'linkedin')) ?>" class="btn btn-block" style="background: #0e76a8; color: white">
+                            <i class="fa fa-linkedin mr-2"></i> Sign in using LinkedIn
+                        </a>
+                    <?php } ?>
+                </div>
+            <?php } ?>
 
             <a href="<?= $this->createUrl('//auth/forget') ?>"><small>Forgot password?</small></a>
             <p class="text-muted text-center"><small>Do not have an account?</small></p>
