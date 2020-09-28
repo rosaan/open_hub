@@ -146,6 +146,62 @@ class AuthController extends Controller
 		$this->render('recover', array('model' => $model));
 	}
 
+	public function actionSocialAuth($type = '')
+	{
+		$social = Yii::app()->socialAuth;
+
+		switch ($type) {
+			case 'linkedin':
+				$social->auth(AuthType::LINKEDIN());
+				break;
+
+			case 'facebook':
+				$social->auth(AuthType::FACEBOOK());
+				break;
+
+			case 'google':
+				$social->auth(AuthType::GOOGLE());
+				break;
+
+			default:
+				return Notice::page('Invalid request!', Notice_ERROR, array(
+					'urlLabel' => 'Login', 'url' => $this->createAbsoluteUrl('//auth/login'),
+				));
+				break;
+		}
+
+		$profile = $social->getProfile();
+		$socialAuth = SocialAuth::findOne($type, $profile->identifier);
+		if (!$socialAuth) {
+			$user = User::username2obj($profile->email);
+			if (!$user) {
+				try {
+					HUB::createLocalMember($profile->email, $profile->firstName . ' ' . $profile->lastName, ysUtil::generateRandomPassword(), $type);
+					$user = User::username2obj($profile->email);
+				} catch (Exception $e) {
+					Notice::debugFlash($e->getMessage());
+					return Notice::page('Something went wrong! Please try again.', Notice_ERROR, array(
+						'urlLabel' => 'Login', 'url' => $this->createAbsoluteUrl('//auth/login'),
+					));
+				}
+			}
+			try {
+				HUB::createSocialAuth($user->id, $type, $profile->identifier);
+				$socialAuth = SocialAuth::findOne($type, $profile->identifier);
+			} catch (\Throwable $th) {
+				Notice::debugFlash($e->getMessage());
+				return Notice::page('Something went wrong! Please try again.', Notice_ERROR, array(
+					'urlLabel' => 'Login', 'url' => $this->createAbsoluteUrl('//auth/login'),
+				));
+			}
+		}
+
+		$identifier = new UserIdentitySocial($type, $profile->identifier);
+		$identifier->authenticate();
+		Yii::app()->user->login($identifier, 0);
+		$this->redirect(Yii::app()->homeUrl);
+	}
+
 	// Uncomment the following methods and override them if needed
 	/*
 	public function filters()

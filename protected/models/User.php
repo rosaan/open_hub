@@ -110,6 +110,7 @@ class User extends UserBase
 			//'members' => array(self::HAS_MANY, 'Member', 'username'),
 			'profile' => array(self::HAS_ONE, 'Profile', 'user_id'),
 			'forgotPassword' => array(self::HAS_ONE, 'ForgotPassword', 'user_id'),
+			'socialAuth' => array(self::HAS_MANY, 'SocialAuth', 'user_id'),
 			'roles' => array(self::MANY_MANY, 'Role', 'role2user(user_id, role_id)'),
 			'sessions' => array(self::HAS_MANY, 'UserSession', 'user_id'),
 		);
@@ -342,6 +343,7 @@ class User extends UserBase
 
 		$result[] = array('code' => 'default', 'title' => $this->formatEnumSignupType('default'));
 		$result[] = array('code' => 'facebook', 'title' => $this->formatEnumSignupType('facebook'));
+		$result[] = array('code' => 'linkedin', 'title' => $this->formatEnumSignupType('linkedin'));
 		$result[] = array('code' => 'google', 'title' => $this->formatEnumSignupType('google'));
 		$result[] = array('code' => 'admin', 'title' => $this->formatEnumSignupType('admin'));
 		$result[] = array('code' => 'connect', 'title' => $this->formatEnumSignupType('connect'));
@@ -368,8 +370,10 @@ class User extends UserBase
 			case 'facebook':
 				return Yii::t('app', 'Facebook');
 				break;
-
 			case 'google':
+				return Yii::t('app', 'Linkedin');
+				break;
+			case 'linkedin':
 				return Yii::t('app', 'Google');
 				break;
 			case 'admin':
